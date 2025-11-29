@@ -12,3 +12,7 @@ def about(request):
 def faq(request):
     return render(request, 'faq.html')
 
+
+def contacts(request):
+    return render(request, 'contacts.html')
+

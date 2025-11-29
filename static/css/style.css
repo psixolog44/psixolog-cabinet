@@ -459,6 +459,79 @@ section h2 {
     margin: 0;
 }
 
+.contacts-section {
+    background: #ffffff;
+}
+
+.contacts-section .section-content {
+    padding: 2rem 0;
+}
+
+.contacts-section h2 {
+    margin-bottom: 1rem;
+}
+
+.contacts-section p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #5a6c7d;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    margin-top: 0;
+}
+
+.contacts-info {
+    background: #f5f0ff;
+}
+
+.contacts-info .section-content {
+    padding: 2rem 0;
+}
+
+.contacts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.contact-block {
+    text-align: center;
+    padding: 2rem 1.5rem;
+}
+
+.contact-block h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.contact-block p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #5a6c7d;
+    margin: 0;
+}
+
+.contacts-map {
+    background: #ffffff;
+}
+
+.contacts-map .section-content {
+    padding: 2rem 0;
+}
+
+.map-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
 .features {
     background: #f5f0ff;
 }
@@ -644,6 +717,16 @@ section h2 {
     
     .faq-item p {
         font-size: 1rem;
+    }
+    
+    .contacts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (max-width: 600px) {
+        .contacts-grid {
+            grid-template-columns: 1fr;
+        }
     }
     
     .steps {
