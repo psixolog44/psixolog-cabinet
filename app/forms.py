@@ -103,3 +103,29 @@ class RegisterForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Имя пользователя"}
+        ),
+        label="Имя пользователя",
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Пароль"}
+        ),
+        label="Пароль",
+    )
+
+    def clean(self):
+        username = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if not user:
+                raise forms.ValidationError("Неверное имя пользователя или пароль")
+            if not user.is_active:
+                raise forms.ValidationError("Этот аккаунт неактивен")
+        return self.cleaned_data
