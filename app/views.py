@@ -174,3 +174,18 @@ def psychologists_list(request):
         "psychologists_list.html",
         {"psychologists": psychologists},
     )
+
+
+@login_required
+def dashboard_student(request):
+    """Панель управления для студентов"""
+    if request.user.is_psychologist():
+        return redirect("index")
+    
+    applications = Application.objects.filter(user=request.user).order_by("-created_at")
+    
+    return render(
+        request,
+        "dashboard_student.html",
+        {"applications": applications},
+    )

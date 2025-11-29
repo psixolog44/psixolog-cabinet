@@ -33,6 +33,7 @@ urlpatterns = [
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
     path("profile/", views.profile_view, name="profile"),
+    path("dashboard/", views.dashboard_student, name="dashboard"),
     path("psychologists/", views.psychologists_list, name="psychologists_list"),
     path("application/create/", views.create_application, name="application_create"),
     path(
