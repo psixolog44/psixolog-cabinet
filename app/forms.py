@@ -194,7 +194,7 @@ class ApplicationForm(forms.ModelForm):
             ),
         }
         labels = {
-            "psychologist": "Выберите психолога",
+            "psychologist": "Выберите психолога (необязательно)",
             "title": "Тема обращения",
             "description": "Описание проблемы",
         }
@@ -202,4 +202,5 @@ class ApplicationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["psychologist"].queryset = User.objects.filter(role="psychologist")
-        self.fields["psychologist"].empty_label = "Выберите психолога"
+        self.fields["psychologist"].required = False
+        self.fields["psychologist"].empty_label = "Не выбирать"

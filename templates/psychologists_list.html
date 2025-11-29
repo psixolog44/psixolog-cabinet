@@ -6,7 +6,15 @@
 <section class="feedback-form-section">
     <div class="section-content">
         <h2>Наши психологи</h2>
-        <p>Выберите психолога для консультации</p>
+        <p>Выберите психолога для консультации или отправьте заявку в общий пул</p>
+        
+        {% if user.is_authenticated and not user.is_psychologist %}
+            <div style="margin-bottom: 2rem; text-align: center;">
+                <a href="{% url 'application_create' %}" class="btn btn-secondary">
+                    Подать заявку в общий пул (любой психолог)
+                </a>
+            </div>
+        {% endif %}
         
         {% if psychologists %}
             <div class="psychologists-grid">
