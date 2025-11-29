@@ -1717,3 +1717,11 @@ textarea.form-control {
     text-align: center;
     color: #6c757d;
 }
+
+.change-status-section {
+    margin-top: 3rem;
+}
+
+.status-change-form {
+    margin-top: 1rem;
+}

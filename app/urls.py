@@ -46,4 +46,5 @@ urlpatterns = [
         name="application_create_with_psychologist",
     ),
     path("my-applications/", views.my_applications, name="my_applications"),
+    path("feedback/<int:feedback_id>/", views.feedback_detail_admin, name="feedback_detail_admin"),
 ]

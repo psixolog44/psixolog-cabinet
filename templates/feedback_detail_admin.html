@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Детали формы обратной связи - Платформа психолога{% endblock %}
+
+{% block content %}
+<section class="feedback-form-section application-detail-section">
+    <div class="section-content application-detail-content">
+        <div class="back-button-container">
+            <a href="{% url 'dashboard_admin' %}" class="btn btn-secondary">← Назад к панели управления</a>
+        </div>
+        
+        <h2>Детали формы обратной связи</h2>
+        
+        <div class="application-info-box">
+            <div class="application-info-item">
+                <strong>Имя:</strong> {{ feedback.name }}
+            </div>
+            <div class="application-info-item">
+                <strong>Email:</strong> {{ feedback.email }}
+            </div>
+            <div class="application-info-item">
+                <strong>Тема:</strong> {{ feedback.subject }}
+            </div>
+            <div class="application-info-item">
+                <strong>Статус:</strong>
+                <span class="application-status status-{{ feedback.status }}">
+                    {{ feedback.get_status_display }}
+                </span>
+            </div>
+            <div class="application-info-item">
+                <strong>Обработано:</strong>
+                {% if feedback.processed %}
+                    Да
+                {% else %}
+                    Нет
+                {% endif %}
+            </div>
+            <div class="application-info-item">
+                <strong>Дата создания:</strong> {{ feedback.created_at|date:"d.m.Y H:i" }}
+            </div>
+        </div>
+        
+        <div class="application-description-box">
+            <h3>Сообщение</h3>
+            <div class="application-description-content">
+                <p class="application-description-text">{{ feedback.message }}</p>
+            </div>
+        </div>
+        
+        <div class="change-status-section">
+            <h3>Изменить статус</h3>
+            <form method="post" class="status-change-form">
+                {% csrf_token %}
+                <input type="hidden" name="change_status" value="1">
+                <div class="form-group">
+                    <label for="status">Статус:</label>
+                    <select name="status" id="status" class="form-control">
+                        <option value="new" {% if feedback.status == "new" %}selected{% endif %}>Новое</option>
+                        <option value="read" {% if feedback.status == "read" %}selected{% endif %}>Прочитано</option>
+                        <option value="replied" {% if feedback.status == "replied" %}selected{% endif %}>Отвечено</option>
+                        <option value="archived" {% if feedback.status == "archived" %}selected{% endif %}>Архивировано</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-submit-margin">Обновить статус</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

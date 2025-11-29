@@ -353,3 +353,28 @@ def application_detail_student(request, application_id):
             "consultations": consultations,
         },
     )
+
+
+@login_required
+def feedback_detail_admin(request, feedback_id):
+    """Детальный просмотр формы обратной связи для администратора"""
+    if not request.user.is_admin_user():
+        return redirect("index")
+    
+    feedback = get_object_or_404(FeedbackForm, id=feedback_id)
+    
+    if request.method == "POST" and "change_status" in request.POST:
+        new_status = request.POST.get("status")
+        if new_status:
+            feedback.status = new_status
+            feedback.save()
+            messages.success(request, "Статус формы обратной связи обновлен.")
+            return redirect("feedback_detail_admin", feedback_id=feedback.id)
+    
+    return render(
+        request,
+        "feedback_detail_admin.html",
+        {
+            "feedback": feedback,
+        },
+    )
