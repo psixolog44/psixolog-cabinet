@@ -288,6 +288,77 @@ section h2 {
     margin: 0 auto;
 }
 
+.about-page {
+    background: #fef9f6;
+    padding: 4rem 0;
+}
+
+.about-page .section-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.about-page h1 {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.about-content {
+    background: #ffffff;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.about-content h2 {
+    font-size: 1.8rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-weight: 600;
+    text-align: left;
+}
+
+.about-content h2:first-of-type {
+    margin-top: 0;
+}
+
+.about-content p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #5a6c7d;
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+
+.about-content ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 1.5rem 0;
+}
+
+.about-content li {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #5a6c7d;
+    padding-left: 1.5rem;
+    position: relative;
+    margin-bottom: 0.8rem;
+}
+
+.about-content li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
 .features {
     background: #f5f0ff;
 }
