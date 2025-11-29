@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Панель управления - Платформа психолога{% endblock %}
+
+{% block content %}
+<section class="feedback-form-section">
+    <div class="section-content">
+        <div class="feedback-form-wrapper">
+            <h2>Панель управления</h2>
+            <p class="feedback-description">Отслеживайте статус ваших заявок и получайте консультации от психологов</p>
+            
+            {% if applications %}
+                <div class="applications-list">
+                    {% for application in applications %}
+                        <div class="application-item">
+                            <div class="application-header">
+                                <h3>{{ application.title }}</h3>
+                                <span class="application-status status-{{ application.status }}">
+                                    {{ application.get_status_display }}
+                                </span>
+                            </div>
+                            <p class="application-description">{{ application.description }}</p>
+                            <div class="application-meta">
+                                <span>Психолог: {% if application.psychologist %}{{ application.psychologist.username }}{% else %}Не назначен{% endif %}</span>
+                                <span>Дата создания: {{ application.created_at|date:"d.m.Y H:i" }}</span>
+                                {% if application.updated_at != application.created_at %}
+                                    <span>Обновлена: {{ application.updated_at|date:"d.m.Y H:i" }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 2rem 0;">
+                    <p style="margin-bottom: 1rem;">У вас пока нет заявок.</p>
+                    <a href="{% url 'application_create' %}" class="btn btn-primary">Подать заявку</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
