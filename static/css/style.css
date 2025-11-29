@@ -1427,3 +1427,149 @@ textarea.form-control {
         width: 100%;
     }
 }
+
+/* Dashboard Student Styles */
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.dashboard-table thead tr {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.dashboard-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.dashboard-table tbody tr {
+    border-bottom: 1px solid #dee2e6;
+    background-color: #ffffff;
+}
+
+.dashboard-table td {
+    padding: 1rem;
+}
+
+.consultation-row {
+    padding: 1rem;
+    background-color: #f8f9fa;
+}
+
+.consultation-content {
+    margin-left: 2rem;
+}
+
+.consultation-item {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 4px;
+    border-left: 3px solid #007bff;
+}
+
+.consultation-header {
+    margin-bottom: 0.5rem;
+}
+
+.consultation-date {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-left: 1rem;
+}
+
+.consultation-message {
+    white-space: pre-wrap;
+    margin: 0;
+}
+
+.answers-count {
+    color: #28a745;
+}
+
+.no-answers {
+    color: #6c757d;
+}
+
+.empty-state-center {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.empty-state-center p {
+    margin-bottom: 1rem;
+}
+
+/* Application Detail Student Styles */
+.application-detail-section {
+    background-color: #ffffff;
+}
+
+.application-detail-content {
+    background-color: #ffffff;
+    padding: 2rem;
+}
+
+.back-button-container {
+    margin-bottom: 1.5rem;
+}
+
+.application-info-box {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+}
+
+.application-info-item {
+    margin-bottom: 1rem;
+}
+
+.application-description-box {
+    margin-top: 2rem;
+}
+
+.application-description-content {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.application-description-text {
+    white-space: pre-wrap;
+}
+
+.consultations-section {
+    margin-top: 3rem;
+}
+
+.consultation-card {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.consultation-card-header {
+    margin-bottom: 0.5rem;
+}
+
+.consultation-card-message {
+    white-space: pre-wrap;
+    margin: 0;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}

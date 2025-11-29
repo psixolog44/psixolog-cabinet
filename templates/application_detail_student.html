@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Детали заявки - Платформа психолога{% endblock %}
+
+{% block content %}
+<section class="feedback-form-section application-detail-section">
+    <div class="section-content application-detail-content">
+        <div class="back-button-container">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Назад к панели управления</a>
+        </div>
+        
+        <h2>Детали заявки</h2>
+        
+        <div class="application-info-box">
+            <div class="application-info-item">
+                <strong>Тема:</strong> {{ application.title }}
+            </div>
+            <div class="application-info-item">
+                <strong>Статус:</strong>
+                <span class="application-status status-{{ application.status }}">
+                    {{ application.get_status_display }}
+                </span>
+            </div>
+            <div class="application-info-item">
+                <strong>Психолог:</strong>
+                {% if application.psychologist %}
+                    {{ application.psychologist.username }}
+                    {% if application.psychologist.first_name or application.psychologist.last_name %}
+                        ({{ application.psychologist.first_name }} {{ application.psychologist.last_name }})
+                    {% endif %}
+                {% else %}
+                    Не назначен
+                {% endif %}
+            </div>
+            <div class="application-info-item">
+                <strong>Дата создания:</strong> {{ application.created_at|date:"d.m.Y H:i" }}
+            </div>
+            {% if application.updated_at != application.created_at %}
+                <div class="application-info-item">
+                    <strong>Дата обновления:</strong> {{ application.updated_at|date:"d.m.Y H:i" }}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="application-description-box">
+            <h3>Описание проблемы</h3>
+            <div class="application-description-content">
+                <p class="application-description-text">{{ application.description }}</p>
+            </div>
+        </div>
+        
+        {% if consultations %}
+            <div class="consultations-section">
+                <h3>Ответы психолога</h3>
+                {% for consultation in consultations %}
+                    <div class="consultation-card">
+                        <div class="consultation-card-header">
+                            <strong>
+                                {% if consultation.psychologist.first_name or consultation.psychologist.last_name %}
+                                    {{ consultation.psychologist.first_name }} {{ consultation.psychologist.last_name }}
+                                {% else %}
+                                    {{ consultation.psychologist.username }}
+                                {% endif %}
+                            </strong>
+                            <span class="consultation-date">
+                                {{ consultation.created_at|date:"d.m.Y H:i" }}
+                            </span>
+                        </div>
+                        <p class="consultation-card-message">{{ consultation.message }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="consultations-section">
+                <p>Пока нет ответов от психолога.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+

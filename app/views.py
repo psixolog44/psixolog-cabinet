@@ -295,3 +295,27 @@ def application_detail_psychologist(request, application_id):
             "consultation_form": consultation_form,
         },
     )
+
+
+@login_required
+def application_detail_student(request, application_id):
+    """Детальный просмотр заявки для студента"""
+    if request.user.is_psychologist() or request.user.is_admin_user():
+        return redirect("index")
+    
+    application = get_object_or_404(Application, id=application_id)
+    
+    if application.user != request.user:
+        messages.error(request, "У вас нет доступа к этой заявке.")
+        return redirect("dashboard")
+    
+    consultations = application.consultations.all().order_by("-created_at")
+    
+    return render(
+        request,
+        "application_detail_student.html",
+        {
+            "application": application,
+            "consultations": consultations,
+        },
+    )

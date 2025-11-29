@@ -37,6 +37,7 @@ urlpatterns = [
     path("dashboard/admin/", views.dashboard_admin, name="dashboard_admin"),
     path("dashboard/psychologist/", views.dashboard_psychologist, name="dashboard_psychologist"),
     path("application/<int:application_id>/", views.application_detail_psychologist, name="application_detail_psychologist"),
+    path("application/student/<int:application_id>/", views.application_detail_student, name="application_detail_student"),
     path("psychologists/", views.psychologists_list, name="psychologists_list"),
     path("application/create/", views.create_application, name="application_create"),
     path(

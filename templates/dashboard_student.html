@@ -3,80 +3,60 @@
 {% block title %}Панель управления - Платформа психолога{% endblock %}
 
 {% block content %}
-<section class="feedback-form-section" style="background-color: #ffffff;">
-    <div class="section-content" style="background-color: #ffffff; padding: 2rem;">
+<section class="feedback-form-section application-detail-section">
+    <div class="section-content application-detail-content">
         <h2>Панель управления</h2>
         
         {% if applications %}
-                <table style="width: 100%; border-collapse: collapse; margin-top: 1.5rem; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
-                    <thead>
-                        <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                            <th style="padding: 1rem; text-align: left; font-weight: 600;">Тема</th>
-                            <th style="padding: 1rem; text-align: left; font-weight: 600;">Статус</th>
-                            <th style="padding: 1rem; text-align: left; font-weight: 600;">Психолог</th>
-                            <th style="padding: 1rem; text-align: left; font-weight: 600;">Дата создания</th>
-                            <th style="padding: 1rem; text-align: left; font-weight: 600;">Ответы</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for application in applications %}
-                            <tr style="border-bottom: 1px solid #dee2e6; background-color: #ffffff;">
-                                <td style="padding: 1rem;">{{ application.title }}</td>
-                                <td style="padding: 1rem;">
-                                    <span class="application-status status-{{ application.status }}">
-                                        {{ application.get_status_display }}
-                                    </span>
-                                </td>
-                                <td style="padding: 1rem;">
-                                    {% if application.psychologist %}
-                                        {{ application.psychologist.username }}
-                                    {% else %}
-                                        Не назначен
-                                    {% endif %}
-                                </td>
-                                <td style="padding: 1rem;">{{ application.created_at|date:"d.m.Y H:i" }}</td>
-                            <td style="padding: 1rem;">
-                                {% if application.consultations.exists %}
-                                    <span style="color: #28a745;">{{ application.consultations.count }} ответ(ов)</span>
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Тема</th>
+                        <th>Статус</th>
+                        <th>Психолог</th>
+                        <th>Дата создания</th>
+                        <th>Ответы</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                        <tr>
+                            <td>{{ application.title }}</td>
+                            <td>
+                                <span class="application-status status-{{ application.status }}">
+                                    {{ application.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if application.psychologist %}
+                                    {{ application.psychologist.username }}
                                 {% else %}
-                                    <span style="color: #6c757d;">Нет ответов</span>
+                                    Не назначен
                                 {% endif %}
                             </td>
-                            </tr>
-                            {% if application.consultations.exists %}
-                                <tr>
-                                    <td colspan="5" style="padding: 1rem; background-color: #f8f9fa;">
-                                        <div style="margin-left: 2rem;">
-                                            <strong>Ответы психолога:</strong>
-                                            {% for consultation in application.consultations.all %}
-                                                <div style="margin-top: 1rem; padding: 1rem; background-color: #ffffff; border-radius: 4px; border-left: 3px solid #007bff;">
-                                                    <div style="margin-bottom: 0.5rem;">
-                                                        <strong>
-                                                            {% if consultation.psychologist.first_name or consultation.psychologist.last_name %}
-                                                                {{ consultation.psychologist.first_name }} {{ consultation.psychologist.last_name }}
-                                                            {% else %}
-                                                                {{ consultation.psychologist.username }}
-                                                            {% endif %}
-                                                        </strong>
-                                                        <span style="color: #6c757d; font-size: 0.9rem; margin-left: 1rem;">
-                                                            {{ consultation.created_at|date:"d.m.Y H:i" }}
-                                                        </span>
-                                                    </div>
-                                                    <p style="white-space: pre-wrap; margin: 0;">{{ consultation.message }}</p>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                    </td>
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <div style="text-align: center; padding: 2rem 0;">
-                    <p style="margin-bottom: 1rem;">У вас пока нет заявок.</p>
-                    <a href="{% url 'application_create' %}" class="btn btn-primary">Подать заявку</a>
-                </div>
+                            <td>{{ application.created_at|date:"d.m.Y H:i" }}</td>
+                            <td>
+                                {% if application.consultations.exists %}
+                                    <span class="answers-count">{{ application.consultations.count }} ответ(ов)</span>
+                                {% else %}
+                                    <span class="no-answers">Нет ответов</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'application_detail_student' application.id %}" class="btn btn-primary btn-sm">
+                                    Детали
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state-center">
+                <p>У вас пока нет заявок.</p>
+                <a href="{% url 'application_create' %}" class="btn btn-primary">Подать заявку</a>
+            </div>
         {% endif %}
     </div>
 </section>
