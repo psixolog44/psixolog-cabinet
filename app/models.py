@@ -132,3 +132,41 @@ class FeedbackForm(models.Model):
 
     def __str__(self):
         return f"{self.subject} - {self.name} ({self.email})"
+
+
+class Meeting(models.Model):
+    """Модель встречи/консультации между студентом и психологом"""
+    
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="student_meetings",
+        limit_choices_to={"role": "user"},
+        verbose_name="Студент",
+    )
+    psychologist = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="psychologist_meetings",
+        limit_choices_to={"role": "psychologist"},
+        verbose_name="Психолог",
+    )
+    application = models.ForeignKey(
+        Application,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="meetings",
+        verbose_name="Заявка",
+    )
+    date = models.DateField(verbose_name="Дата")
+    time = models.TimeField(verbose_name="Время")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    
+    class Meta:
+        verbose_name = "Встреча"
+        verbose_name_plural = "Встречи"
+        ordering = ["date", "time"]
+    
+    def __str__(self):
+        return f"Встреча {self.student.username} с {self.psychologist.username} - {self.date} {self.time}"

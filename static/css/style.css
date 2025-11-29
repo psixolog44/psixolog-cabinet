@@ -1573,3 +1573,33 @@ textarea.form-control {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
 }
+
+.meetings-section {
+    margin-top: 3rem;
+}
+
+.meetings-section h3 {
+    margin-bottom: 1rem;
+}
+
+.no-meetings {
+    margin-top: 1rem;
+    color: #6c757d;
+}
+
+.no-applications {
+    margin-top: 1rem;
+    color: #6c757d;
+}
+
+.meeting-section {
+    margin-top: 3rem;
+}
+
+.meeting-form {
+    margin-top: 1rem;
+}
+
+.btn-submit-margin {
+    margin-top: 1rem;
+}
