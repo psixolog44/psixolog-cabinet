@@ -42,3 +42,22 @@ def feedback(request):
     else:
         form = FeedbackFormForm()
     return render(request, "feedback.html", {"form": form})
+
+
+def register_view(request):
+    if request.user.is_authenticated:
+        return redirect("index")
+
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(
+                request,
+                f"Добро пожаловать, {user.username}! Вы успешно зарегистрированы.",
+            )
+            return redirect("index")
+    else:
+        form = RegisterForm()
+    return render(request, "register.html", {"form": form})
