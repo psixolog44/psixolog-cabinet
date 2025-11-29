@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import FeedbackFormForm, RegisterForm, LoginForm
+from .forms import FeedbackFormForm, RegisterForm, LoginForm, ProfileForm
 
 
 def index(request):
@@ -89,3 +89,16 @@ def logout_view(request):
     logout(request)
     messages.success(request, "Вы успешно вышли из системы.")
     return redirect("index")
+
+
+@login_required
+def profile_view(request):
+    if request.method == "POST":
+        form = ProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Профиль успешно обновлен.")
+            return redirect("profile")
+    else:
+        form = ProfileForm(instance=request.user)
+    return render(request, "profile.html", {"form": form})

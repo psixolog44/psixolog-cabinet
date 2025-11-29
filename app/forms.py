@@ -104,3 +104,21 @@ class LoginForm(forms.Form):
             if not user.is_active:
                 raise forms.ValidationError("Этот аккаунт неактивен")
         return self.cleaned_data
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name"]
+        widgets = {
+            "first_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Имя"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Фамилия"}
+            ),
+        }
+        labels = {
+            "first_name": "Имя",
+            "last_name": "Фамилия",
+        }

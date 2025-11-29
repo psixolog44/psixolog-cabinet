@@ -1009,6 +1009,36 @@ textarea.form-control {
     text-decoration: underline;
 }
 
+.profile-info {
+    background: #f5f0ff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.95rem;
+}
+
+.info-value {
+    color: #5a6c7d;
+    font-size: 0.95rem;
+}
+
 .contacts-wrapper {
     display: flex;
     gap: 0;
