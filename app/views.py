@@ -59,10 +59,6 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(
-                request,
-                f"Добро пожаловать, {user.username}! Вы успешно зарегистрированы.",
-            )
             return redirect("index")
     else:
         form = RegisterForm()
@@ -93,7 +89,6 @@ def login_view(request):
 @login_required
 def logout_view(request):
     logout(request)
-    messages.success(request, "Вы успешно вышли из системы.")
     return redirect("index")
 
 

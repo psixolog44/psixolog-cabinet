@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
-from .models import FeedbackForm, User
+from .models import FeedbackForm, User, Application
 
 
 class FeedbackFormForm(forms.ModelForm):
@@ -140,7 +140,10 @@ class PasswordChangeForm(forms.Form):
     )
     new_password2 = forms.CharField(
         widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "Подтверждение нового пароля"}
+            attrs={
+                "class": "form-control",
+                "placeholder": "Подтверждение нового пароля",
+            }
         ),
         label="Подтверждение нового пароля",
     )
@@ -169,3 +172,34 @@ class PasswordChangeForm(forms.Form):
         if commit:
             self.user.save()
         return self.user
+
+
+class ApplicationForm(forms.ModelForm):
+    """Форма для подачи заявки психологу"""
+
+    class Meta:
+        model = Application
+        fields = ["psychologist", "title", "description"]
+        widgets = {
+            "psychologist": forms.Select(attrs={"class": "form-control"}),
+            "title": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Тема обращения"}
+            ),
+            "description": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Опишите вашу ситуацию или проблему",
+                    "rows": 8,
+                }
+            ),
+        }
+        labels = {
+            "psychologist": "Выберите психолога",
+            "title": "Тема обращения",
+            "description": "Описание проблемы",
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["psychologist"].queryset = User.objects.filter(role="psychologist")
+        self.fields["psychologist"].empty_label = "Выберите психолога"
