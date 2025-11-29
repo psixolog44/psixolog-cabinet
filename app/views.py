@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -8,7 +8,9 @@ from .forms import (
     LoginForm,
     ProfileForm,
     PasswordChangeForm,
+    ApplicationForm,
 )
+from .models import User, Application
 
 
 def index(request):
@@ -115,4 +117,60 @@ def profile_view(request):
         request,
         "profile.html",
         {"profile_form": profile_form, "password_form": password_form},
+    )
+
+
+@login_required
+def create_application(request, psychologist_id=None):
+    """Создание заявки психологу"""
+    if request.user.is_psychologist():
+        messages.error(
+            request,
+            "Психологи не могут подавать заявки. Используйте панель управления для работы с заявками.",
+        )
+        return redirect("index")
+    
+    if request.method == "POST":
+        form = ApplicationForm(request.POST)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.user = request.user
+            application.status = "pending"
+            application.save()
+            messages.success(
+                request,
+                "Заявка успешно отправлена! Психолог рассмотрит её в ближайшее время.",
+            )
+            return redirect("my_applications")
+    else:
+        form = ApplicationForm()
+        if psychologist_id:
+            psychologist = get_object_or_404(
+                User, id=psychologist_id, role="psychologist"
+            )
+            form.fields["psychologist"].initial = psychologist
+    
+    return render(request, "application_create.html", {"form": form})
+
+
+@login_required
+def my_applications(request):
+    """Список заявок текущего пользователя"""
+    applications = Application.objects.filter(user=request.user).order_by(
+        "-created_at"
+    )
+    return render(
+        request,
+        "my_applications.html",
+        {"applications": applications},
+    )
+
+
+def psychologists_list(request):
+    """Список всех психологов"""
+    psychologists = User.objects.filter(role="psychologist").order_by("username")
+    return render(
+        request,
+        "psychologists_list.html",
+        {"psychologists": psychologists},
     )
