@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
-from .models import FeedbackForm, User, Application
+from .models import FeedbackForm, User, Application, Consultation
 
 
 class FeedbackFormForm(forms.ModelForm):
@@ -211,3 +211,23 @@ class ApplicationForm(forms.ModelForm):
             return obj.username
         
         self.fields["psychologist"].label_from_instance = label_from_instance
+
+
+class ConsultationForm(forms.ModelForm):
+    """Форма для ответа психолога на заявку"""
+    
+    class Meta:
+        model = Consultation
+        fields = ["message"]
+        widgets = {
+            "message": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Введите ваш ответ студенту",
+                    "rows": 6,
+                }
+            ),
+        }
+        labels = {
+            "message": "Ответ",
+        }

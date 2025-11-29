@@ -68,13 +68,36 @@
             </div>
         {% endif %}
         
+        {% if application.psychologist == user or not application.psychologist %}
+            <div style="margin-top: 3rem;">
+                <h3>Ответить на заявку</h3>
+                <form method="post" style="margin-top: 1rem;">
+                    {% csrf_token %}
+                    <input type="hidden" name="add_consultation" value="1">
+                    <div class="form-group">
+                        <label for="{{ consultation_form.message.id_for_label }}">
+                            {{ consultation_form.message.label }}
+                        </label>
+                        {{ consultation_form.message }}
+                        {% if consultation_form.message.errors %}
+                            <div class="form-error">{{ consultation_form.message.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Отправить ответ</button>
+                </form>
+            </div>
+        {% endif %}
+        
         {% if consultations %}
             <div style="margin-top: 3rem;">
-                <h3>Консультации</h3>
+                <h3>История сообщений</h3>
                 {% for consultation in consultations %}
                     <div style="background-color: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-top: 1rem;">
                         <div style="margin-bottom: 0.5rem;">
                             <strong>{{ consultation.psychologist.username }}</strong>
+                            {% if consultation.psychologist.first_name or consultation.psychologist.last_name %}
+                                ({{ consultation.psychologist.first_name }} {{ consultation.psychologist.last_name }})
+                            {% endif %}
                             <span style="color: #6c757d; font-size: 0.9rem; margin-left: 1rem;">
                                 {{ consultation.created_at|date:"d.m.Y H:i" }}
                             </span>

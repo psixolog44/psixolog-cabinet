@@ -9,6 +9,7 @@ from .forms import (
     ProfileForm,
     PasswordChangeForm,
     ApplicationForm,
+    ConsultationForm,
 )
 from .models import User, Application, FeedbackForm
 
@@ -259,13 +260,29 @@ def application_detail_psychologist(request, application_id):
         messages.error(request, "У вас нет доступа к этой заявке.")
         return redirect("dashboard_psychologist")
     
-    if request.method == "POST" and "take_application" in request.POST:
-        if not application.psychologist:
-            application.psychologist = request.user
-            application.status = "in_progress"
-            application.save()
-            messages.success(request, "Заявка успешно взята в работу.")
-            return redirect("application_detail_psychologist", application_id=application.id)
+    if request.method == "POST":
+        if "take_application" in request.POST:
+            if not application.psychologist:
+                application.psychologist = request.user
+                application.status = "in_progress"
+                application.save()
+                messages.success(request, "Заявка успешно взята в работу.")
+                return redirect("application_detail_psychologist", application_id=application.id)
+        elif "add_consultation" in request.POST:
+            consultation_form = ConsultationForm(request.POST)
+            if consultation_form.is_valid():
+                consultation = consultation_form.save(commit=False)
+                consultation.application = application
+                consultation.psychologist = request.user
+                consultation.save()
+                if application.status == "pending":
+                    application.status = "in_progress"
+                    application.psychologist = request.user
+                    application.save()
+                messages.success(request, "Ответ успешно отправлен студенту.")
+                return redirect("application_detail_psychologist", application_id=application.id)
+    else:
+        consultation_form = ConsultationForm()
     
     consultations = application.consultations.all().order_by("-created_at")
     
@@ -275,5 +292,6 @@ def application_detail_psychologist(request, application_id):
         {
             "application": application,
             "consultations": consultations,
+            "consultation_form": consultation_form,
         },
     )
