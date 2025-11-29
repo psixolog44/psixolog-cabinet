@@ -48,3 +48,34 @@ function showTab(tabId, buttonElement) {
     }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+    const timeInputs = document.querySelectorAll('input[type="time"]');
+    
+    dateInputs.forEach(function(input) {
+        input.addEventListener('click', function() {
+            if (this.showPicker) {
+                this.showPicker();
+            }
+        });
+        input.addEventListener('focus', function() {
+            if (this.showPicker) {
+                this.showPicker();
+            }
+        });
+    });
+    
+    timeInputs.forEach(function(input) {
+        input.addEventListener('click', function() {
+            if (this.showPicker) {
+                this.showPicker();
+            }
+        });
+        input.addEventListener('focus', function() {
+            if (this.showPicker) {
+                this.showPicker();
+            }
+        });
+    });
+});
+

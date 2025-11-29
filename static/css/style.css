@@ -1634,3 +1634,53 @@ textarea.form-control {
     font-size: 0.9rem;
     margin-left: 1rem;
 }
+
+.date-input,
+.time-input {
+    cursor: pointer;
+    position: relative;
+    padding-right: 2.5rem;
+    width: 100%;
+}
+
+.date-input::-webkit-calendar-picker-indicator,
+.time-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    position: absolute;
+    right: 0.5rem;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 1;
+}
+
+.date-input:focus,
+.time-input:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+    border-color: #667eea;
+}
+
+.meeting-form .form-group {
+    position: relative;
+}
+
+.meeting-form .form-group:first-of-type::after {
+    content: "📅";
+    position: absolute;
+    right: 1rem;
+    top: 3rem;
+    pointer-events: none;
+    font-size: 1.2rem;
+    z-index: 0;
+}
+
+.meeting-form .form-group:last-of-type::after {
+    content: "🕐";
+    position: absolute;
+    right: 1rem;
+    top: 3rem;
+    pointer-events: none;
+    font-size: 1.2rem;
+    z-index: 0;
+}

@@ -242,13 +242,13 @@ class MeetingForm(forms.ModelForm):
         widgets = {
             "date": forms.DateInput(
                 attrs={
-                    "class": "form-control",
+                    "class": "form-control date-input",
                     "type": "date",
                 }
             ),
             "time": forms.TimeInput(
                 attrs={
-                    "class": "form-control",
+                    "class": "form-control time-input",
                     "type": "time",
                 }
             ),
