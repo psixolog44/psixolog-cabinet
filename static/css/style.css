@@ -591,6 +591,138 @@ section h2 {
     margin: 0;
 }
 
+.support-content {
+    background: #ffffff;
+}
+
+.support-content .section-content {
+    padding: 1rem 0 2rem 0;
+    max-width: 1000px;
+}
+
+.support-content .section-content h2 {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.support-content .section-content > p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #5a6c7d;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+}
+
+.support-text-block {
+    margin-bottom: 3rem;
+}
+
+.support-text-block:last-of-type {
+    margin-bottom: 0;
+}
+
+.support-text-block h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.support-text-block p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #5a6c7d;
+    margin-bottom: 1rem;
+}
+
+.support-reasons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.reason-item {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.reason-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.reason-item h4 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.reason-item p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #5a6c7d;
+    margin: 0;
+}
+
+.support-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+}
+
+.support-list li {
+    font-size: 1.1rem;
+    line-height: 2;
+    color: #5a6c7d;
+    padding-left: 2rem;
+    position: relative;
+}
+
+.support-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.support-cta {
+    background: #f5f0ff;
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.support-cta h3 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.support-cta p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #5a6c7d;
+    margin-bottom: 2rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.support-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
 .contacts-wrapper {
     display: flex;
     gap: 0;

@@ -20,3 +20,7 @@ def contacts(request):
 def services(request):
     return render(request, 'services.html')
 
+
+def support(request):
+    return render(request, 'support.html')
+
