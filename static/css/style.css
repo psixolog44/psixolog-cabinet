@@ -489,16 +489,53 @@ section h2 {
     padding: 2rem 0;
 }
 
+.contacts-wrapper {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    height: 600px;
+}
+
 .contacts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
+    flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    height: 100%;
 }
 
 .contact-block {
+    flex: 1;
     text-align: center;
-    padding: 2rem 1.5rem;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.contact-block:last-child {
+    border-bottom: none;
+}
+
+.map-container {
+    flex: 0 0 60%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    flex: 1;
 }
 
 .contact-block h3 {
@@ -515,22 +552,6 @@ section h2 {
     margin: 0;
 }
 
-.contacts-map {
-    background: #ffffff;
-}
-
-.contacts-map .section-content {
-    padding: 2rem 0;
-}
-
-.map-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
 
 .features {
     background: #f5f0ff;
@@ -719,8 +740,26 @@ section h2 {
         font-size: 1rem;
     }
     
+    .contacts-wrapper {
+        flex-direction: column;
+        gap: 0;
+    }
+    
     .contacts-grid {
+        flex: 1;
         grid-template-columns: repeat(2, 1fr);
+        padding: 1.5rem;
+    }
+    
+    .map-container {
+        flex: 1;
+        width: 100%;
+        min-height: 300px;
+        position: relative;
+    }
+    
+    .contacts-wrapper {
+        min-height: auto;
     }
     
     @media (max-width: 600px) {
