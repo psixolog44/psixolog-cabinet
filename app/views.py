@@ -217,6 +217,7 @@ def dashboard_admin(request):
     
     users = User.objects.all().order_by("-created_at")
     feedback_forms = FeedbackForm.objects.all().order_by("-created_at")
+    meetings = Meeting.objects.all().order_by("date", "time")
     
     return render(
         request,
@@ -224,6 +225,7 @@ def dashboard_admin(request):
         {
             "users": users,
             "feedback_forms": feedback_forms,
+            "meetings": meetings,
         },
     )
 

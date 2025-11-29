@@ -1684,3 +1684,21 @@ textarea.form-control {
     font-size: 1.2rem;
     z-index: 0;
 }
+
+.role-change-form {
+    display: inline;
+}
+
+.role-select {
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.empty-table-cell {
+    padding: 1rem;
+    text-align: center;
+    color: #6c757d;
+}
