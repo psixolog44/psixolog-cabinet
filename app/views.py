@@ -16,3 +16,7 @@ def faq(request):
 def contacts(request):
     return render(request, 'contacts.html')
 
+
+def services(request):
+    return render(request, 'services.html')
+
