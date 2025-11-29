@@ -681,6 +681,9 @@ section h2 {
     list-style: none;
     padding: 0;
     margin: 1.5rem 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem 2rem;
 }
 
 .support-list li {

@@ -103,3 +103,32 @@ class Consultation(models.Model):
 
     def __str__(self):
         return f"Консультация по заявке {self.application.id}"
+
+
+class FeedbackForm(models.Model):
+    """Модель формы обратной связи"""
+
+    STATUS_CHOICES = [
+        ("new", "Новое"),
+        ("read", "Прочитано"),
+        ("replied", "Отвечено"),
+        ("archived", "Архивировано"),
+    ]
+
+    name = models.CharField(max_length=100, verbose_name="Имя")
+    email = models.EmailField(verbose_name="Email")
+    subject = models.CharField(max_length=200, verbose_name="Тема")
+    message = models.TextField(verbose_name="Сообщение")
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default="new", verbose_name="Статус"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    processed = models.BooleanField(default=False, verbose_name="Обработано")
+
+    class Meta:
+        verbose_name = "Обратная связь"
+        verbose_name_plural = "Обратная связь"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.subject} - {self.name} ({self.email})"
