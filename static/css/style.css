@@ -177,10 +177,6 @@ main {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-}
 
 .btn:active {
     transform: translateY(0);
@@ -191,20 +187,53 @@ main {
     color: white;
 }
 
-.btn-primary:hover {
-    background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
-}
-
-.btn-secondary {
-    background-color: rgba(255, 255, 255, 0.2);
+.hero-section .btn {
+    background: rgba(255, 255, 255, 0.2);
     color: #ffffff;
     border: 2px solid rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(10px);
 }
 
-.btn-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.3);
+.hero-section .btn-primary {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.hero-section .btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.hero-section .btn:hover {
+    background: rgba(255, 255, 255, 0.3);
     border-color: rgba(255, 255, 255, 0.7);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.hero-section .btn-primary:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.hero-section .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+    background-color: #ffffff;
+    color: #2c3e50;
+    border: 2px solid #e0e0e0;
+}
+
+.btn-secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #d0d0d0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 footer {
