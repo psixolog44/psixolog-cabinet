@@ -42,6 +42,11 @@ def contacts(request):
     return render(request, "contacts.html", {"breadcrumbs": breadcrumbs})
 
 
+def privacy(request):
+    breadcrumbs = get_breadcrumbs([{"title": "Конфиденциальность", "url": ""}])
+    return render(request, "privacy.html", {"breadcrumbs": breadcrumbs})
+
+
 def services(request):
     breadcrumbs = get_breadcrumbs([{"title": "Услуги", "url": ""}])
     return render(request, "services.html", {"breadcrumbs": breadcrumbs})

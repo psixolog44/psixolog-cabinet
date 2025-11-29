@@ -14,7 +14,16 @@
             <div class="container">
                 <a href="/" class="logo">Платформа психолога</a>
                 <div class="nav-center-links">
-                    <a href="{% url 'about' %}">О нас</a>
+                    <div class="nav-dropdown">
+                        <a href="{% url 'about' %}" class="nav-dropdown-toggle">
+                            О нас
+                            <span class="nav-dropdown-arrow">▼</span>
+                        </a>
+                        <div class="nav-dropdown-menu">
+                            <a href="{% url 'about' %}">О нас</a>
+                            <a href="{% url 'privacy' %}">Конфиденциальность</a>
+                        </div>
+                    </div>
                     <a href="{% url 'services' %}">Услуги</a>
                     <a href="{% url 'support' %}">Мотивация</a>
                     <a href="{% url 'faq' %}">FAQ</a>
