@@ -58,6 +58,38 @@
                 <a href="{% url 'application_create' %}" class="btn btn-primary">Подать заявку</a>
             </div>
         {% endif %}
+        
+        <div class="meetings-section">
+            <h3>Встречи</h3>
+            {% if meetings %}
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Психолог</th>
+                            <th>Дата</th>
+                            <th>Время</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for meeting in meetings %}
+                            <tr>
+                                <td>
+                                    {% if meeting.psychologist.first_name or meeting.psychologist.last_name %}
+                                        {{ meeting.psychologist.first_name }} {{ meeting.psychologist.last_name }}
+                                    {% else %}
+                                        {{ meeting.psychologist.username }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ meeting.date|date:"d.m.Y" }}</td>
+                                <td>{{ meeting.time|date:"H:i" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-meetings">У вас пока нет назначенных встреч.</p>
+            {% endif %}
+        </div>
     </div>
 </section>
 {% endblock %}

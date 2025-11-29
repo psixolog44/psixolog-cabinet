@@ -3,35 +3,35 @@
 {% block title %}Панель управления психолога - Платформа психолога{% endblock %}
 
 {% block content %}
-<section class="feedback-form-section" style="background-color: #ffffff;">
-    <div class="section-content" style="background-color: #ffffff; padding: 2rem;">
+<section class="feedback-form-section application-detail-section">
+    <div class="section-content application-detail-content">
         <h2>Панель управления психолога</h2>
         
-        <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Мои заявки</h3>
+        <h3 class="dashboard-section-title">Мои заявки</h3>
         {% if applications %}
-            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
+            <table class="dashboard-table">
                 <thead>
-                    <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Тема</th>
-                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Студент</th>
-                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Статус</th>
-                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Дата создания</th>
-                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Действия</th>
+                    <tr>
+                        <th>Тема</th>
+                        <th>Студент</th>
+                        <th>Статус</th>
+                        <th>Дата создания</th>
+                        <th>Действия</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for application in applications %}
-                        <tr style="border-bottom: 1px solid #dee2e6; background-color: #ffffff;">
-                            <td style="padding: 1rem;">{{ application.title }}</td>
-                            <td style="padding: 1rem;">{{ application.user.username }}</td>
-                            <td style="padding: 1rem;">
+                        <tr>
+                            <td>{{ application.title }}</td>
+                            <td>{{ application.user.username }}</td>
+                            <td>
                                 <span class="application-status status-{{ application.status }}">
                                     {{ application.get_status_display }}
                                 </span>
                             </td>
-                            <td style="padding: 1rem;">{{ application.created_at|date:"d.m.Y H:i" }}</td>
-                            <td style="padding: 1rem;">
-                                <a href="{% url 'application_detail_psychologist' application.id %}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                            <td>{{ application.created_at|date:"d.m.Y H:i" }}</td>
+                            <td>
+                                <a href="{% url 'application_detail_psychologist' application.id %}" class="btn btn-primary btn-sm">
                                     Детали
                                 </a>
                             </td>
@@ -40,28 +40,28 @@
                 </tbody>
             </table>
         {% else %}
-            <p style="margin-top: 1rem;">У вас пока нет назначенных заявок.</p>
+            <p class="no-applications">У вас пока нет назначенных заявок.</p>
         {% endif %}
 
-        <h3 style="margin-top: 3rem; margin-bottom: 1rem;">Заявки из общего пула</h3>
+        <h3 class="dashboard-section-title">Заявки из общего пула</h3>
         {% if general_applications %}
-            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
+            <table class="dashboard-table">
                 <thead>
-                    <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Тема</th>
-                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Студент</th>
-                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Дата создания</th>
-                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Действия</th>
+                    <tr>
+                        <th>Тема</th>
+                        <th>Студент</th>
+                        <th>Дата создания</th>
+                        <th>Действия</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for application in general_applications %}
-                        <tr style="border-bottom: 1px solid #dee2e6; background-color: #ffffff;">
-                            <td style="padding: 1rem;">{{ application.title }}</td>
-                            <td style="padding: 1rem;">{{ application.user.username }}</td>
-                            <td style="padding: 1rem;">{{ application.created_at|date:"d.m.Y H:i" }}</td>
-                            <td style="padding: 1rem;">
-                                <a href="{% url 'application_detail_psychologist' application.id %}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                        <tr>
+                            <td>{{ application.title }}</td>
+                            <td>{{ application.user.username }}</td>
+                            <td>{{ application.created_at|date:"d.m.Y H:i" }}</td>
+                            <td>
+                                <a href="{% url 'application_detail_psychologist' application.id %}" class="btn btn-primary btn-sm">
                                     Детали
                                 </a>
                             </td>
@@ -72,6 +72,32 @@
         {% else %}
             <p class="no-applications">Нет заявок в общем пуле.</p>
         {% endif %}
+        
+        <div class="meetings-section">
+            <h3>Встречи</h3>
+            {% if meetings %}
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Студент</th>
+                            <th>Дата</th>
+                            <th>Время</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for meeting in meetings %}
+                            <tr>
+                                <td>{{ meeting.student.username }}</td>
+                                <td>{{ meeting.date|date:"d.m.Y" }}</td>
+                                <td>{{ meeting.time|date:"H:i" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-meetings">У вас пока нет назначенных встреч.</p>
+            {% endif %}
+        </div>
     </div>
 </section>
 {% endblock %}

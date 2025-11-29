@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
-from .models import FeedbackForm, User, Application, Consultation
+from .models import FeedbackForm, User, Application, Consultation, Meeting
 
 
 class FeedbackFormForm(forms.ModelForm):
@@ -230,4 +230,30 @@ class ConsultationForm(forms.ModelForm):
         }
         labels = {
             "message": "Ответ",
+        }
+
+
+class MeetingForm(forms.ModelForm):
+    """Форма для назначения встречи"""
+    
+    class Meta:
+        model = Meeting
+        fields = ["date", "time"]
+        widgets = {
+            "date": forms.DateInput(
+                attrs={
+                    "class": "form-control",
+                    "type": "date",
+                }
+            ),
+            "time": forms.TimeInput(
+                attrs={
+                    "class": "form-control",
+                    "type": "time",
+                }
+            ),
+        }
+        labels = {
+            "date": "Дата встречи",
+            "time": "Время встречи",
         }

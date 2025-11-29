@@ -10,8 +10,9 @@ from .forms import (
     PasswordChangeForm,
     ApplicationForm,
     ConsultationForm,
+    MeetingForm,
 )
-from .models import User, Application, FeedbackForm
+from .models import User, Application, FeedbackForm, Meeting
 
 
 def index(request):
@@ -186,11 +187,15 @@ def dashboard_student(request):
         return redirect("dashboard_psychologist")
     
     applications = Application.objects.filter(user=request.user).order_by("-created_at")
+    meetings = Meeting.objects.filter(student=request.user).order_by("date", "time")
     
     return render(
         request,
         "dashboard_student.html",
-        {"applications": applications},
+        {
+            "applications": applications,
+            "meetings": meetings,
+        },
     )
 
 
@@ -238,12 +243,15 @@ def dashboard_psychologist(request):
         status="pending"
     ).order_by("-created_at")
     
+    meetings = Meeting.objects.filter(psychologist=request.user).order_by("date", "time")
+    
     return render(
         request,
         "dashboard_psychologist.html",
         {
             "applications": applications,
             "general_applications": general_applications,
+            "meetings": meetings,
         },
     )
 
@@ -281,8 +289,19 @@ def application_detail_psychologist(request, application_id):
                     application.save()
                 messages.success(request, "Ответ успешно отправлен студенту.")
                 return redirect("application_detail_psychologist", application_id=application.id)
+        elif "add_meeting" in request.POST:
+            meeting_form = MeetingForm(request.POST)
+            if meeting_form.is_valid():
+                meeting = meeting_form.save(commit=False)
+                meeting.student = application.user
+                meeting.psychologist = request.user
+                meeting.application = application
+                meeting.save()
+                messages.success(request, "Встреча успешно назначена.")
+                return redirect("application_detail_psychologist", application_id=application.id)
     else:
         consultation_form = ConsultationForm()
+        meeting_form = MeetingForm()
     
     consultations = application.consultations.all().order_by("-created_at")
     
@@ -293,6 +312,7 @@ def application_detail_psychologist(request, application_id):
             "application": application,
             "consultations": consultations,
             "consultation_form": consultation_form,
+            "meeting_form": meeting_form,
         },
     )
 

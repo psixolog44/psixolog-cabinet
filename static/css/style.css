@@ -1603,3 +1603,34 @@ textarea.form-control {
 .btn-submit-margin {
     margin-top: 1rem;
 }
+
+.dashboard-section-title {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.take-application-section {
+    margin-top: 2rem;
+}
+
+.consultation-form-section {
+    margin-top: 3rem;
+}
+
+.consultation-form {
+    margin-top: 1rem;
+}
+
+.consultation-card-header {
+    margin-bottom: 0.5rem;
+}
+
+.consultation-card-header strong {
+    display: inline-block;
+}
+
+.consultation-date {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-left: 1rem;
+}
