@@ -338,6 +338,17 @@ main {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
+.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #218838 0%, #1aa179 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+}
+
 footer {
     background-color: rgba(44, 62, 80, 0.9);
     color: white;
@@ -1610,6 +1621,10 @@ textarea.form-control {
 }
 
 .take-application-section {
+    margin-top: 2rem;
+}
+
+.complete-application-section {
     margin-top: 2rem;
 }
 

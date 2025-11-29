@@ -301,6 +301,12 @@ def application_detail_psychologist(request, application_id):
                 meeting.save()
                 messages.success(request, "Встреча успешно назначена.")
                 return redirect("application_detail_psychologist", application_id=application.id)
+        elif "complete_application" in request.POST:
+            if application.psychologist == request.user:
+                application.status = "completed"
+                application.save()
+                messages.success(request, "Заявка успешно завершена.")
+                return redirect("application_detail_psychologist", application_id=application.id)
     else:
         consultation_form = ConsultationForm()
         meeting_form = MeetingForm()

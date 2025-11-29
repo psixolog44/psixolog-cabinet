@@ -66,6 +66,14 @@
                     <button type="submit" class="btn btn-primary">Взять заявку в работу</button>
                 </form>
             </div>
+        {% elif application.psychologist == user and application.status != "completed" %}
+            <div class="complete-application-section">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="complete_application" value="1">
+                    <button type="submit" class="btn btn-success">Завершить работу над заявкой</button>
+                </form>
+            </div>
         {% endif %}
         
         {% if application.psychologist == user or not application.psychologist %}
