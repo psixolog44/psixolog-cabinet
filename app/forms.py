@@ -204,3 +204,10 @@ class ApplicationForm(forms.ModelForm):
         self.fields["psychologist"].queryset = User.objects.filter(role="psychologist")
         self.fields["psychologist"].required = False
         self.fields["psychologist"].empty_label = "Не выбирать"
+        
+        def label_from_instance(obj):
+            if obj.first_name or obj.last_name:
+                return f"{obj.first_name} {obj.last_name}".strip()
+            return obj.username
+        
+        self.fields["psychologist"].label_from_instance = label_from_instance

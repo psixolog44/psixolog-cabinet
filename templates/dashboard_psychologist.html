@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Панель управления психолога - Платформа психолога{% endblock %}
+
+{% block content %}
+<section class="feedback-form-section" style="background-color: #ffffff;">
+    <div class="section-content" style="background-color: #ffffff; padding: 2rem;">
+        <h2>Панель управления психолога</h2>
+        
+        <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Мои заявки</h3>
+        {% if applications %}
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
+                <thead>
+                    <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Тема</th>
+                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Студент</th>
+                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Статус</th>
+                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Дата создания</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                        <tr style="border-bottom: 1px solid #dee2e6; background-color: #ffffff;">
+                            <td style="padding: 1rem;">{{ application.title }}</td>
+                            <td style="padding: 1rem;">{{ application.user.username }}</td>
+                            <td style="padding: 1rem;">
+                                <span class="application-status status-{{ application.status }}">
+                                    {{ application.get_status_display }}
+                                </span>
+                            </td>
+                            <td style="padding: 1rem;">{{ application.created_at|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="margin-top: 1rem;">У вас пока нет назначенных заявок.</p>
+        {% endif %}
+
+        <h3 style="margin-top: 3rem; margin-bottom: 1rem;">Заявки из общего пула</h3>
+        {% if general_applications %}
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
+                <thead>
+                    <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Тема</th>
+                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Студент</th>
+                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Дата создания</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in general_applications %}
+                        <tr style="border-bottom: 1px solid #dee2e6; background-color: #ffffff;">
+                            <td style="padding: 1rem;">{{ application.title }}</td>
+                            <td style="padding: 1rem;">{{ application.user.username }}</td>
+                            <td style="padding: 1rem;">{{ application.created_at|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="margin-top: 1rem;">Нет заявок в общем пуле.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+

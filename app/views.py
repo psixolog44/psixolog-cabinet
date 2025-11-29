@@ -182,7 +182,7 @@ def dashboard_student(request):
     if request.user.is_admin_user():
         return redirect("dashboard_admin")
     if request.user.is_psychologist():
-        return redirect("index")
+        return redirect("dashboard_psychologist")
     
     applications = Application.objects.filter(user=request.user).order_by("-created_at")
     
@@ -218,5 +218,30 @@ def dashboard_admin(request):
         {
             "users": users,
             "feedback_forms": feedback_forms,
+        },
+    )
+
+
+@login_required
+def dashboard_psychologist(request):
+    """Панель управления для психологов"""
+    if not request.user.is_psychologist():
+        return redirect("index")
+    
+    applications = Application.objects.filter(
+        psychologist=request.user
+    ).order_by("-created_at")
+    
+    general_applications = Application.objects.filter(
+        psychologist__isnull=True,
+        status="pending"
+    ).order_by("-created_at")
+    
+    return render(
+        request,
+        "dashboard_psychologist.html",
+        {
+            "applications": applications,
+            "general_applications": general_applications,
         },
     )
