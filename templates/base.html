@@ -22,11 +22,30 @@
                 </div>
                 <div class="nav-links">
                     {% if user.is_authenticated %}
-                        <a href="/dashboard">Панель управления</a>
-                        <a href="/logout">Выход</a>
+                        <div class="user-menu">
+                            <button class="user-menu-button" onclick="toggleUserMenu()">
+                                <span class="user-name">{{ user.username }}</span>
+                                <span class="user-menu-arrow">▼</span>
+                            </button>
+                            <div class="user-menu-dropdown" id="userMenuDropdown">
+                                <a href="/dashboard" class="dropdown-item">
+                                    Панель управления
+                                </a>
+                                <a href="/profile" class="dropdown-item">
+                                    Профиль
+                                </a>
+                                <a href="/application/create" class="dropdown-item">
+                                    Подать заявку
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="{% url 'logout' %}" class="dropdown-item">
+                                    Выход
+                                </a>
+                            </div>
+                        </div>
                     {% else %}
-                        <a href="/login">Вход</a>
-                        <a href="/register">Регистрация</a>
+                        <a href="{% url 'login' %}">Вход</a>
+                        <a href="{% url 'register' %}">Регистрация</a>
                     {% endif %}
                 </div>
             </div>

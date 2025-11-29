@@ -77,7 +77,6 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
-                messages.success(request, f"Добро пожаловать, {user.username}!")
                 next_url = request.GET.get("next", "index")
                 return redirect(next_url)
     else:
