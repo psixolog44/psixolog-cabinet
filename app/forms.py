@@ -42,37 +42,12 @@ class RegisterForm(UserCreationForm):
         ),
         label="Email",
     )
-    first_name = forms.CharField(
-        max_length=30,
-        required=False,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Имя"}),
-        label="Имя",
-    )
-    last_name = forms.CharField(
-        max_length=30,
-        required=False,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Фамилия"}
-        ),
-        label="Фамилия",
-    )
-    phone = forms.CharField(
-        max_length=20,
-        required=False,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Телефон"}
-        ),
-        label="Телефон",
-    )
 
     class Meta:
         model = User
         fields = (
             "username",
             "email",
-            "first_name",
-            "last_name",
-            "phone",
             "password1",
             "password2",
         )

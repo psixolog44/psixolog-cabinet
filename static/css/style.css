@@ -905,6 +905,31 @@ textarea.form-control {
     transform: translateX(5px);
 }
 
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.auth-link {
+    text-align: center;
+    margin-top: 1rem;
+    color: #5a6c7d;
+    font-size: 0.95rem;
+}
+
+.auth-link a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.auth-link a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
 .contacts-wrapper {
     display: flex;
     gap: 0;

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация - Платформа психолога{% endblock %}
+
+{% block content %}
+<section class="feedback-form-section">
+    <div class="section-content">
+        <div class="feedback-form-wrapper">
+            <h2>Регистрация</h2>
+            <p class="feedback-description">Создайте аккаунт для доступа к платформе</p>
+            <form method="post" class="feedback-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}">
+                        <span class="label-icon">👤</span>
+                        {{ form.username.label }}
+                    </label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="form-error">{{ form.username.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">
+                        <span class="label-icon">✉️</span>
+                        {{ form.email.label }}
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="form-error">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password1.id_for_label }}">
+                        <span class="label-icon">🔒</span>
+                        {{ form.password1.label }}
+                    </label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                        <div class="form-error">{{ form.password1.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}">
+                        <span class="label-icon">🔒</span>
+                        {{ form.password2.label }}
+                    </label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                        <div class="form-error">{{ form.password2.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-submit">
+                    <span>Зарегистрироваться</span>
+                    <span class="btn-icon">→</span>
+                </button>
+
+                <p class="auth-link">
+                    Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
