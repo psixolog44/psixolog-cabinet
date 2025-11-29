@@ -459,34 +459,19 @@ section h2 {
     margin: 0;
 }
 
-.contacts-section {
-    background: #ffffff;
-}
-
-.contacts-section .section-content {
-    padding: 2rem 0;
-}
-
-.contacts-section h2 {
-    margin-bottom: 1rem;
-}
-
-.contacts-section p {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #5a6c7d;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-    margin-top: 0;
-}
-
 .contacts-info {
     background: #f5f0ff;
+    position: relative;
 }
 
 .contacts-info .section-content {
-    padding: 2rem 0;
+    padding: 1rem 0 2rem 0;
+}
+
+.contacts-info h2 {
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    text-align: center;
 }
 
 .contacts-wrapper {
@@ -504,22 +489,38 @@ section h2 {
     flex: 0 0 40%;
     display: flex;
     flex-direction: column;
-    padding: 2rem;
+    padding: 0.8rem;
     height: 100%;
 }
 
 .contact-block {
-    flex: 1;
+    flex: 1 1 0;
+    min-height: 0;
     text-align: center;
-    padding: 1.5rem;
+    padding: 0.8rem;
     border-bottom: 1px solid rgba(102, 126, 234, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    position: relative;
+}
+
+.contact-block:hover {
+    background-color: rgba(102, 126, 234, 0.05);
 }
 
 .contact-block:last-child {
     border-bottom: none;
+}
+
+.contact-icon {
+    font-size: 1.2rem;
+    position: absolute;
+    top: 0.8rem;
+    left: 0.8rem;
+    display: block;
 }
 
 .map-container {
@@ -539,15 +540,15 @@ section h2 {
 }
 
 .contact-block h3 {
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
     color: #2c3e50;
     font-weight: 600;
 }
 
 .contact-block p {
-    font-size: 1.1rem;
-    line-height: 1.8;
+    font-size: 0.95rem;
+    line-height: 1.5;
     color: #5a6c7d;
     margin: 0;
 }
