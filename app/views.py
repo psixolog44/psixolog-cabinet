@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 from .forms import (
     FeedbackFormForm,
     RegisterForm,
@@ -15,28 +16,40 @@ from .forms import (
 from .models import User, Application, FeedbackForm, Meeting
 
 
+def get_breadcrumbs(items):
+    """Вспомогательная функция для создания breadcrumbs"""
+    breadcrumbs = [{"title": "Главная", "url": reverse("index")}]
+    breadcrumbs.extend(items)
+    return breadcrumbs
+
+
 def index(request):
-    return render(request, "index.html")
+    return render(request, "index.html", {"breadcrumbs": []})
 
 
 def about(request):
-    return render(request, "about.html")
+    breadcrumbs = get_breadcrumbs([{"title": "О нас", "url": ""}])
+    return render(request, "about.html", {"breadcrumbs": breadcrumbs})
 
 
 def faq(request):
-    return render(request, "faq.html")
+    breadcrumbs = get_breadcrumbs([{"title": "FAQ", "url": ""}])
+    return render(request, "faq.html", {"breadcrumbs": breadcrumbs})
 
 
 def contacts(request):
-    return render(request, "contacts.html")
+    breadcrumbs = get_breadcrumbs([{"title": "Контакты", "url": ""}])
+    return render(request, "contacts.html", {"breadcrumbs": breadcrumbs})
 
 
 def services(request):
-    return render(request, "services.html")
+    breadcrumbs = get_breadcrumbs([{"title": "Услуги", "url": ""}])
+    return render(request, "services.html", {"breadcrumbs": breadcrumbs})
 
 
 def support(request):
-    return render(request, "support.html")
+    breadcrumbs = get_breadcrumbs([{"title": "Мотивация", "url": ""}])
+    return render(request, "support.html", {"breadcrumbs": breadcrumbs})
 
 
 def feedback(request):
@@ -51,7 +64,8 @@ def feedback(request):
             return redirect("feedback")
     else:
         form = FeedbackFormForm()
-    return render(request, "feedback.html", {"form": form})
+    breadcrumbs = get_breadcrumbs([{"title": "Обратная связь", "url": ""}])
+    return render(request, "feedback.html", {"form": form, "breadcrumbs": breadcrumbs})
 
 
 def register_view(request):
@@ -66,7 +80,8 @@ def register_view(request):
             return redirect("index")
     else:
         form = RegisterForm()
-    return render(request, "register.html", {"form": form})
+    breadcrumbs = get_breadcrumbs([{"title": "Регистрация", "url": ""}])
+    return render(request, "register.html", {"form": form, "breadcrumbs": breadcrumbs})
 
 
 def login_view(request):
@@ -87,7 +102,8 @@ def login_view(request):
                 return redirect(next_url)
     else:
         form = LoginForm()
-    return render(request, "login.html", {"form": form})
+    breadcrumbs = get_breadcrumbs([{"title": "Вход", "url": ""}])
+    return render(request, "login.html", {"form": form, "breadcrumbs": breadcrumbs})
 
 
 @login_required
@@ -115,10 +131,15 @@ def profile_view(request):
                 messages.success(request, "Пароль успешно изменен.")
                 return redirect("profile")
 
+    breadcrumbs = get_breadcrumbs([{"title": "Профиль", "url": ""}])
     return render(
         request,
         "profile.html",
-        {"profile_form": profile_form, "password_form": password_form},
+        {
+            "profile_form": profile_form,
+            "password_form": password_form,
+            "breadcrumbs": breadcrumbs,
+        },
     )
 
 
@@ -152,7 +173,8 @@ def create_application(request, psychologist_id=None):
             )
             form.fields["psychologist"].initial = psychologist
     
-    return render(request, "application_create.html", {"form": form})
+    breadcrumbs = get_breadcrumbs([{"title": "Подать заявку", "url": ""}])
+    return render(request, "application_create.html", {"form": form, "breadcrumbs": breadcrumbs})
 
 
 @login_required
@@ -161,20 +183,22 @@ def my_applications(request):
     applications = Application.objects.filter(user=request.user).order_by(
         "-created_at"
     )
+    breadcrumbs = get_breadcrumbs([{"title": "Мои заявки", "url": ""}])
     return render(
         request,
         "my_applications.html",
-        {"applications": applications},
+        {"applications": applications, "breadcrumbs": breadcrumbs},
     )
 
 
 def psychologists_list(request):
     """Список всех психологов"""
     psychologists = User.objects.filter(role="psychologist").order_by("username")
+    breadcrumbs = get_breadcrumbs([{"title": "Психологи", "url": ""}])
     return render(
         request,
         "psychologists_list.html",
-        {"psychologists": psychologists},
+        {"psychologists": psychologists, "breadcrumbs": breadcrumbs},
     )
 
 
@@ -195,6 +219,7 @@ def dashboard_student(request):
     applications = applications.order_by("-created_at")
     meetings = Meeting.objects.filter(student=request.user).order_by("date", "time")
     
+    breadcrumbs = get_breadcrumbs([{"title": "Панель управления", "url": ""}])
     return render(
         request,
         "dashboard_student.html",
@@ -202,6 +227,7 @@ def dashboard_student(request):
             "applications": applications,
             "meetings": meetings,
             "current_status": status_filter,
+            "breadcrumbs": breadcrumbs,
         },
     )
 
@@ -240,6 +266,7 @@ def dashboard_admin(request):
         meetings = meetings.filter(date=meeting_date_filter)
     meetings = meetings.order_by("date", "time")
     
+    breadcrumbs = get_breadcrumbs([{"title": "Панель управления администратора", "url": ""}])
     return render(
         request,
         "dashboard_admin.html",
@@ -250,6 +277,7 @@ def dashboard_admin(request):
             "current_user_role": user_role_filter,
             "current_feedback_status": feedback_status_filter,
             "current_meeting_date": meeting_date_filter,
+            "breadcrumbs": breadcrumbs,
         },
     )
 
@@ -275,6 +303,7 @@ def dashboard_psychologist(request):
     
     meetings = Meeting.objects.filter(psychologist=request.user).order_by("date", "time")
     
+    breadcrumbs = get_breadcrumbs([{"title": "Панель управления психолога", "url": ""}])
     return render(
         request,
         "dashboard_psychologist.html",
@@ -283,6 +312,7 @@ def dashboard_psychologist(request):
             "general_applications": general_applications,
             "meetings": meetings,
             "current_status": status_filter,
+            "breadcrumbs": breadcrumbs,
         },
     )
 
@@ -348,6 +378,10 @@ def application_detail_psychologist(request, application_id):
     
     consultations = application.consultations.all().order_by("-created_at")
     
+    breadcrumbs = get_breadcrumbs([
+        {"title": "Панель управления", "url": reverse("dashboard_psychologist")},
+        {"title": f"Заявка #{application.id}", "url": ""},
+    ])
     return render(
         request,
         "application_detail_psychologist.html",
@@ -356,6 +390,7 @@ def application_detail_psychologist(request, application_id):
             "consultations": consultations,
             "consultation_form": consultation_form,
             "meeting_form": meeting_form,
+            "breadcrumbs": breadcrumbs,
         },
     )
 
@@ -374,12 +409,17 @@ def application_detail_student(request, application_id):
     
     consultations = application.consultations.all().order_by("-created_at")
     
+    breadcrumbs = get_breadcrumbs([
+        {"title": "Панель управления", "url": reverse("dashboard")},
+        {"title": f"Заявка #{application.id}", "url": ""},
+    ])
     return render(
         request,
         "application_detail_student.html",
         {
             "application": application,
             "consultations": consultations,
+            "breadcrumbs": breadcrumbs,
         },
     )
 
@@ -400,10 +440,15 @@ def feedback_detail_admin(request, feedback_id):
             messages.success(request, "Статус формы обратной связи обновлен.")
             return redirect("feedback_detail_admin", feedback_id=feedback.id)
     
+    breadcrumbs = get_breadcrumbs([
+        {"title": "Панель управления", "url": reverse("dashboard_admin")},
+        {"title": f"Форма обратной связи #{feedback.id}", "url": ""},
+    ])
     return render(
         request,
         "feedback_detail_admin.html",
         {
             "feedback": feedback,
+            "breadcrumbs": breadcrumbs,
         },
     )
