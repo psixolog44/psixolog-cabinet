@@ -16,6 +16,7 @@
                         <th style="padding: 1rem; text-align: left; font-weight: 600;">Студент</th>
                         <th style="padding: 1rem; text-align: left; font-weight: 600;">Статус</th>
                         <th style="padding: 1rem; text-align: left; font-weight: 600;">Дата создания</th>
+                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Действия</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,6 +30,11 @@
                                 </span>
                             </td>
                             <td style="padding: 1rem;">{{ application.created_at|date:"d.m.Y H:i" }}</td>
+                            <td style="padding: 1rem;">
+                                <a href="{% url 'application_detail_psychologist' application.id %}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                    Детали
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -45,6 +51,7 @@
                         <th style="padding: 1rem; text-align: left; font-weight: 600;">Тема</th>
                         <th style="padding: 1rem; text-align: left; font-weight: 600;">Студент</th>
                         <th style="padding: 1rem; text-align: left; font-weight: 600;">Дата создания</th>
+                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Действия</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,6 +60,11 @@
                             <td style="padding: 1rem;">{{ application.title }}</td>
                             <td style="padding: 1rem;">{{ application.user.username }}</td>
                             <td style="padding: 1rem;">{{ application.created_at|date:"d.m.Y H:i" }}</td>
+                            <td style="padding: 1rem;">
+                                <a href="{% url 'application_detail_psychologist' application.id %}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                    Детали
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

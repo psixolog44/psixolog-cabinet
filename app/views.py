@@ -245,3 +245,35 @@ def dashboard_psychologist(request):
             "general_applications": general_applications,
         },
     )
+
+
+@login_required
+def application_detail_psychologist(request, application_id):
+    """Детальный просмотр заявки для психолога"""
+    if not request.user.is_psychologist():
+        return redirect("index")
+    
+    application = get_object_or_404(Application, id=application_id)
+    
+    if application.psychologist and application.psychologist != request.user:
+        messages.error(request, "У вас нет доступа к этой заявке.")
+        return redirect("dashboard_psychologist")
+    
+    if request.method == "POST" and "take_application" in request.POST:
+        if not application.psychologist:
+            application.psychologist = request.user
+            application.status = "in_progress"
+            application.save()
+            messages.success(request, "Заявка успешно взята в работу.")
+            return redirect("application_detail_psychologist", application_id=application.id)
+    
+    consultations = application.consultations.all().order_by("-created_at")
+    
+    return render(
+        request,
+        "application_detail_psychologist.html",
+        {
+            "application": application,
+            "consultations": consultations,
+        },
+    )

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Детали заявки - Платформа психолога{% endblock %}
+
+{% block content %}
+<section class="feedback-form-section" style="background-color: #ffffff;">
+    <div class="section-content" style="background-color: #ffffff; padding: 2rem;">
+        <div style="margin-bottom: 1.5rem;">
+            <a href="{% url 'dashboard_psychologist' %}" class="btn btn-secondary" style="margin-bottom: 1rem;">← Назад к списку заявок</a>
+        </div>
+        
+        <h2>Детали заявки</h2>
+        
+        <div style="background-color: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
+            <div style="margin-bottom: 1rem;">
+                <strong>Тема:</strong> {{ application.title }}
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <strong>Студент:</strong> {{ application.user.username }}
+                {% if application.user.first_name or application.user.last_name %}
+                    ({{ application.user.first_name }} {{ application.user.last_name }})
+                {% endif %}
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <strong>Email студента:</strong> {{ application.user.email }}
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <strong>Статус:</strong>
+                <span class="application-status status-{{ application.status }}">
+                    {{ application.get_status_display }}
+                </span>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <strong>Психолог:</strong>
+                {% if application.psychologist %}
+                    {{ application.psychologist.username }}
+                    {% if application.psychologist.first_name or application.psychologist.last_name %}
+                        ({{ application.psychologist.first_name }} {{ application.psychologist.last_name }})
+                    {% endif %}
+                {% else %}
+                    Не назначен
+                {% endif %}
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <strong>Дата создания:</strong> {{ application.created_at|date:"d.m.Y H:i" }}
+            </div>
+            {% if application.updated_at != application.created_at %}
+                <div style="margin-bottom: 1rem;">
+                    <strong>Дата обновления:</strong> {{ application.updated_at|date:"d.m.Y H:i" }}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div style="margin-top: 2rem;">
+            <h3>Описание проблемы</h3>
+            <div style="background-color: #ffffff; padding: 1.5rem; border: 1px solid #dee2e6; border-radius: 8px; margin-top: 1rem;">
+                <p style="white-space: pre-wrap;">{{ application.description }}</p>
+            </div>
+        </div>
+        
+        {% if not application.psychologist %}
+            <div style="margin-top: 2rem;">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="take_application" value="1">
+                    <button type="submit" class="btn btn-primary">Взять заявку в работу</button>
+                </form>
+            </div>
+        {% endif %}
+        
+        {% if consultations %}
+            <div style="margin-top: 3rem;">
+                <h3>Консультации</h3>
+                {% for consultation in consultations %}
+                    <div style="background-color: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-top: 1rem;">
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>{{ consultation.psychologist.username }}</strong>
+                            <span style="color: #6c757d; font-size: 0.9rem; margin-left: 1rem;">
+                                {{ consultation.created_at|date:"d.m.Y H:i" }}
+                            </span>
+                        </div>
+                        <p style="white-space: pre-wrap; margin: 0;">{{ consultation.message }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
