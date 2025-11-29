@@ -279,6 +279,9 @@ def application_detail_psychologist(request, application_id):
                 messages.success(request, "Заявка успешно взята в работу.")
                 return redirect("application_detail_psychologist", application_id=application.id)
         elif "add_consultation" in request.POST:
+            if application.status == "completed":
+                messages.error(request, "Нельзя отправлять ответы для завершенной заявки.")
+                return redirect("application_detail_psychologist", application_id=application.id)
             consultation_form = ConsultationForm(request.POST)
             if consultation_form.is_valid():
                 consultation = consultation_form.save(commit=False)
@@ -292,6 +295,9 @@ def application_detail_psychologist(request, application_id):
                 messages.success(request, "Ответ успешно отправлен студенту.")
                 return redirect("application_detail_psychologist", application_id=application.id)
         elif "add_meeting" in request.POST:
+            if application.status == "completed":
+                messages.error(request, "Нельзя назначать встречи для завершенной заявки.")
+                return redirect("application_detail_psychologist", application_id=application.id)
             meeting_form = MeetingForm(request.POST)
             if meeting_form.is_valid():
                 meeting = meeting_form.save(commit=False)

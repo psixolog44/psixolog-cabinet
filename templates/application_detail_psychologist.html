@@ -77,50 +77,52 @@
         {% endif %}
         
         {% if application.psychologist == user or not application.psychologist %}
-            <div class="consultation-form-section">
-                <h3>Ответить на заявку</h3>
-                <form method="post" class="consultation-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="add_consultation" value="1">
-                    <div class="form-group">
-                        <label for="{{ consultation_form.message.id_for_label }}">
-                            {{ consultation_form.message.label }}
-                        </label>
-                        {{ consultation_form.message }}
-                        {% if consultation_form.message.errors %}
-                            <div class="form-error">{{ consultation_form.message.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-submit-margin">Отправить ответ</button>
-                </form>
-            </div>
-            
-            <div class="meeting-section">
-                <h3>Назначить встречу</h3>
-                <form method="post" class="meeting-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="add_meeting" value="1">
-                    <div class="form-group">
-                        <label for="{{ meeting_form.date.id_for_label }}">
-                            {{ meeting_form.date.label }}
-                        </label>
-                        {{ meeting_form.date }}
-                        {% if meeting_form.date.errors %}
-                            <div class="form-error">{{ meeting_form.date.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ meeting_form.time.id_for_label }}">
-                            {{ meeting_form.time.label }}
-                        </label>
-                        {{ meeting_form.time }}
-                        {% if meeting_form.time.errors %}
-                            <div class="form-error">{{ meeting_form.time.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-submit-margin">Назначить встречу</button>
-                </form>
-            </div>
+            {% if application.status != "completed" %}
+                <div class="consultation-form-section">
+                    <h3>Ответить на заявку</h3>
+                    <form method="post" class="consultation-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="add_consultation" value="1">
+                        <div class="form-group">
+                            <label for="{{ consultation_form.message.id_for_label }}">
+                                {{ consultation_form.message.label }}
+                            </label>
+                            {{ consultation_form.message }}
+                            {% if consultation_form.message.errors %}
+                                <div class="form-error">{{ consultation_form.message.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-submit-margin">Отправить ответ</button>
+                    </form>
+                </div>
+                
+                <div class="meeting-section">
+                    <h3>Назначить встречу</h3>
+                    <form method="post" class="meeting-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="add_meeting" value="1">
+                        <div class="form-group">
+                            <label for="{{ meeting_form.date.id_for_label }}">
+                                {{ meeting_form.date.label }}
+                            </label>
+                            {{ meeting_form.date }}
+                            {% if meeting_form.date.errors %}
+                                <div class="form-error">{{ meeting_form.date.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ meeting_form.time.id_for_label }}">
+                                {{ meeting_form.time.label }}
+                            </label>
+                            {{ meeting_form.time }}
+                            {% if meeting_form.time.errors %}
+                                <div class="form-error">{{ meeting_form.time.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-submit-margin">Назначить встречу</button>
+                    </form>
+                </div>
+            {% endif %}
         {% endif %}
         
         {% if consultations %}
