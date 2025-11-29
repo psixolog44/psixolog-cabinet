@@ -1725,3 +1725,115 @@ textarea.form-control {
 .status-change-form {
     margin-top: 1rem;
 }
+
+.table-container {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.filter-section {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+    padding: 0;
+    background-color: transparent;
+}
+
+.filter-form {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.filter-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f5ff 100%);
+    border: 1.5px solid rgba(102, 126, 234, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    transition: all 0.3s ease;
+}
+
+.filter-wrapper:hover {
+    border-color: rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-1px);
+}
+
+.filter-icon {
+    font-size: 1rem;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.filter-wrapper:hover .filter-icon {
+    opacity: 1;
+}
+
+.filter-select {
+    width: auto;
+    min-width: 150px;
+    padding: 0.4rem 0.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    background-color: transparent;
+    color: #2c3e50;
+    font-weight: 500;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    padding-right: 2rem;
+}
+
+.filter-select:focus {
+    color: #667eea;
+}
+
+.filter-select option {
+    background-color: #ffffff;
+    color: #2c3e50;
+    padding: 0.5rem;
+}
+
+.filter-reset-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1.5px solid rgba(102, 126, 234, 0.3);
+    border-radius: 8px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f5ff 100%);
+    color: #667eea;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.1);
+}
+
+.filter-reset-btn:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: #ffffff;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.reset-icon {
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1;
+    display: block;
+}
+
+.dashboard-table {
+    margin-top: 0;
+}

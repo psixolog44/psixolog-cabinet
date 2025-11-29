@@ -186,7 +186,13 @@ def dashboard_student(request):
     if request.user.is_psychologist():
         return redirect("dashboard_psychologist")
     
-    applications = Application.objects.filter(user=request.user).order_by("-created_at")
+    applications = Application.objects.filter(user=request.user)
+    
+    status_filter = request.GET.get("status")
+    if status_filter:
+        applications = applications.filter(status=status_filter)
+    
+    applications = applications.order_by("-created_at")
     meetings = Meeting.objects.filter(student=request.user).order_by("date", "time")
     
     return render(
@@ -195,6 +201,7 @@ def dashboard_student(request):
         {
             "applications": applications,
             "meetings": meetings,
+            "current_status": status_filter,
         },
     )
 
@@ -215,9 +222,23 @@ def dashboard_admin(request):
             messages.success(request, f"Роль пользователя {user.username} изменена на {user.get_role_display()}")
             return redirect("dashboard_admin")
     
-    users = User.objects.all().order_by("-created_at")
-    feedback_forms = FeedbackForm.objects.all().order_by("-created_at")
-    meetings = Meeting.objects.all().order_by("date", "time")
+    users = User.objects.all()
+    user_role_filter = request.GET.get("user_role")
+    if user_role_filter:
+        users = users.filter(role=user_role_filter)
+    users = users.order_by("-created_at")
+    
+    feedback_forms = FeedbackForm.objects.all()
+    feedback_status_filter = request.GET.get("feedback_status")
+    if feedback_status_filter:
+        feedback_forms = feedback_forms.filter(status=feedback_status_filter)
+    feedback_forms = feedback_forms.order_by("-created_at")
+    
+    meetings = Meeting.objects.all()
+    meeting_date_filter = request.GET.get("meeting_date")
+    if meeting_date_filter:
+        meetings = meetings.filter(date=meeting_date_filter)
+    meetings = meetings.order_by("date", "time")
     
     return render(
         request,
@@ -226,6 +247,9 @@ def dashboard_admin(request):
             "users": users,
             "feedback_forms": feedback_forms,
             "meetings": meetings,
+            "current_user_role": user_role_filter,
+            "current_feedback_status": feedback_status_filter,
+            "current_meeting_date": meeting_date_filter,
         },
     )
 
@@ -236,9 +260,13 @@ def dashboard_psychologist(request):
     if not request.user.is_psychologist():
         return redirect("index")
     
-    applications = Application.objects.filter(
-        psychologist=request.user
-    ).order_by("-created_at")
+    applications = Application.objects.filter(psychologist=request.user)
+    
+    status_filter = request.GET.get("status")
+    if status_filter:
+        applications = applications.filter(status=status_filter)
+    
+    applications = applications.order_by("-created_at")
     
     general_applications = Application.objects.filter(
         psychologist__isnull=True,
@@ -254,6 +282,7 @@ def dashboard_psychologist(request):
             "applications": applications,
             "general_applications": general_applications,
             "meetings": meetings,
+            "current_status": status_filter,
         },
     )
 

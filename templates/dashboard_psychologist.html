@@ -9,7 +9,27 @@
         
         <h3 class="dashboard-section-title">Мои заявки</h3>
         {% if applications %}
-            <table class="dashboard-table">
+            <div class="table-container">
+                <div class="filter-section">
+                    <form method="get" class="filter-form">
+                        <div class="filter-wrapper">
+                            <span class="filter-icon">🔍</span>
+                            <select name="status" id="status" class="filter-select" onchange="this.form.submit()">
+                                <option value="">Все статусы</option>
+                                <option value="pending" {% if current_status == "pending" %}selected{% endif %}>Ожидает</option>
+                                <option value="in_progress" {% if current_status == "in_progress" %}selected{% endif %}>В работе</option>
+                                <option value="completed" {% if current_status == "completed" %}selected{% endif %}>Завершена</option>
+                                <option value="cancelled" {% if current_status == "cancelled" %}selected{% endif %}>Отменена</option>
+                            </select>
+                        </div>
+                        {% if current_status %}
+                            <a href="{% url 'dashboard_psychologist' %}" class="filter-reset-btn" title="Сбросить фильтр">
+                                <span class="reset-icon">✕</span>
+                            </a>
+                        {% endif %}
+                    </form>
+                </div>
+                <table class="dashboard-table">
                 <thead>
                     <tr>
                         <th>Тема</th>
@@ -39,6 +59,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            </div>
         {% else %}
             <p class="no-applications">У вас пока нет назначенных заявок.</p>
         {% endif %}

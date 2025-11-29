@@ -8,7 +8,28 @@
         <h2>Панель управления администратора</h2>
         
         <h3 class="dashboard-section-title">Управление пользователями</h3>
-        <table class="dashboard-table">
+        <div class="table-container">
+            <div class="filter-section">
+                <form method="get" class="filter-form">
+                    <input type="hidden" name="feedback_status" value="{{ current_feedback_status }}">
+                    <input type="hidden" name="meeting_date" value="{{ current_meeting_date }}">
+                    <div class="filter-wrapper">
+                        <span class="filter-icon">👥</span>
+                        <select name="user_role" id="user_role" class="filter-select" onchange="this.form.submit()">
+                            <option value="">Все роли</option>
+                            <option value="user" {% if current_user_role == "user" %}selected{% endif %}>Пользователь</option>
+                            <option value="psychologist" {% if current_user_role == "psychologist" %}selected{% endif %}>Психолог</option>
+                            <option value="admin" {% if current_user_role == "admin" %}selected{% endif %}>Администратор</option>
+                        </select>
+                    </div>
+                    {% if current_user_role or current_feedback_status or current_meeting_date %}
+                        <a href="{% url 'dashboard_admin' %}" class="filter-reset-btn" title="Сбросить все фильтры">
+                            <span class="reset-icon">✕</span>
+                        </a>
+                    {% endif %}
+                </form>
+            </div>
+            <table class="dashboard-table">
             <thead>
                 <tr>
                     <th>Имя пользователя</th>
@@ -41,9 +62,27 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
 
         <h3 class="dashboard-section-title">Формы обратной связи</h3>
-        <table class="dashboard-table">
+        <div class="table-container">
+            <div class="filter-section">
+                <form method="get" class="filter-form">
+                    <input type="hidden" name="user_role" value="{{ current_user_role }}">
+                    <input type="hidden" name="meeting_date" value="{{ current_meeting_date }}">
+                    <div class="filter-wrapper">
+                        <span class="filter-icon">📋</span>
+                        <select name="feedback_status" id="feedback_status" class="filter-select" onchange="this.form.submit()">
+                            <option value="">Все статусы</option>
+                            <option value="new" {% if current_feedback_status == "new" %}selected{% endif %}>Новое</option>
+                            <option value="read" {% if current_feedback_status == "read" %}selected{% endif %}>Прочитано</option>
+                            <option value="replied" {% if current_feedback_status == "replied" %}selected{% endif %}>Отвечено</option>
+                            <option value="archived" {% if current_feedback_status == "archived" %}selected{% endif %}>Архивировано</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <table class="dashboard-table">
             <thead>
                 <tr>
                     <th>Имя</th>
@@ -79,11 +118,23 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
         
         <div class="meetings-section">
             <h3>Все встречи</h3>
             {% if meetings %}
-                <table class="dashboard-table">
+                <div class="table-container">
+                    <div class="filter-section">
+                        <form method="get" class="filter-form">
+                            <input type="hidden" name="user_role" value="{{ current_user_role }}">
+                            <input type="hidden" name="feedback_status" value="{{ current_feedback_status }}">
+                            <div class="filter-wrapper">
+                                <span class="filter-icon">📅</span>
+                                <input type="date" name="meeting_date" id="meeting_date" class="filter-select date-input" value="{{ current_meeting_date }}" onchange="this.form.submit()">
+                            </div>
+                        </form>
+                    </div>
+                    <table class="dashboard-table">
                     <thead>
                         <tr>
                             <th>Студент</th>
@@ -111,6 +162,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
             {% else %}
                 <p class="no-meetings">Нет назначенных встреч.</p>
             {% endif %}
