@@ -75,3 +75,31 @@ class Application(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.user.username}"
+
+
+class Consultation(models.Model):
+    """Модель консультации/ответа психолога на заявку"""
+
+    application = models.ForeignKey(
+        Application,
+        on_delete=models.CASCADE,
+        related_name="consultations",
+        verbose_name="Заявка",
+    )
+    psychologist = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="consultations",
+        limit_choices_to={"role": "psychologist"},
+        verbose_name="Психолог",
+    )
+    message = models.TextField(verbose_name="Сообщение")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+
+    class Meta:
+        verbose_name = "Консультация"
+        verbose_name_plural = "Консультации"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Консультация по заявке {self.application.id}"
