@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Подать заявку - Платформа психолога{% endblock %}
+
+{% block content %}
+<section class="feedback-form-section">
+    <div class="section-content">
+        <div class="feedback-form-wrapper">
+            <h2>Подать заявку психологу</h2>
+            <p class="feedback-description">Заполните форму, и психолог рассмотрит вашу заявку в ближайшее время</p>
+            <form method="post" class="feedback-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.psychologist.id_for_label }}">
+                        <span class="label-icon">👤</span>
+                        {{ form.psychologist.label }}
+                    </label>
+                    {{ form.psychologist }}
+                    {% if form.psychologist.errors %}
+                        <div class="form-error">{{ form.psychologist.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}">
+                        <span class="label-icon">📋</span>
+                        {{ form.title.label }}
+                    </label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="form-error">{{ form.title.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">
+                        <span class="label-icon">💬</span>
+                        {{ form.description.label }}
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <div class="form-error">{{ form.description.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-submit">
+                    <span>Отправить заявку</span>
+                    <span class="btn-icon">→</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

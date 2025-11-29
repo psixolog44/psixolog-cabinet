@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Психологи - Платформа психолога{% endblock %}
+
+{% block content %}
+<section class="feedback-form-section">
+    <div class="section-content">
+        <h2>Наши психологи</h2>
+        <p>Выберите психолога для консультации</p>
+        
+        {% if psychologists %}
+            <div class="psychologists-grid">
+                {% for psychologist in psychologists %}
+                    <div class="psychologist-card">
+                        <h3>
+                            {% if psychologist.first_name or psychologist.last_name %}
+                                {{ psychologist.first_name }} {{ psychologist.last_name }}
+                            {% else %}
+                                {{ psychologist.username }}
+                            {% endif %}
+                        </h3>
+                        <p>@{{ psychologist.username }}</p>
+                        {% if psychologist.email %}
+                            <p>📧 {{ psychologist.email }}</p>
+                        {% endif %}
+                        {% if user.is_authenticated and not user.is_psychologist %}
+                            <a href="{% url 'application_create_with_psychologist' psychologist.id %}" class="btn btn-primary">
+                                Подать заявку
+                            </a>
+                        {% elif not user.is_authenticated %}
+                            <a href="{% url 'login' %}" class="btn btn-secondary">
+                                Войти для подачи заявки
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Психологи пока не зарегистрированы на платформе.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+

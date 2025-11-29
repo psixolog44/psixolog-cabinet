@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои заявки - Платформа психолога{% endblock %}
+
+{% block content %}
+<section class="feedback-form-section">
+    <div class="section-content">
+        <div class="feedback-form-wrapper">
+            <h2>Мои заявки</h2>
+            {% if applications %}
+                <div class="applications-list">
+                    {% for application in applications %}
+                        <div class="application-item">
+                            <div class="application-header">
+                                <h3>{{ application.title }}</h3>
+                                <span class="application-status status-{{ application.status }}">
+                                    {{ application.get_status_display }}
+                                </span>
+                            </div>
+                            <p class="application-description">{{ application.description|truncatewords:30 }}</p>
+                            <div class="application-meta">
+                                <span>Психолог: {% if application.psychologist %}{{ application.psychologist.username }}{% else %}Не назначен{% endif %}</span>
+                                <span>Дата: {{ application.created_at|date:"d.m.Y H:i" }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>У вас пока нет заявок.</p>
+                <a href="{% url 'application_create' %}" class="btn btn-primary">Подать заявку</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
