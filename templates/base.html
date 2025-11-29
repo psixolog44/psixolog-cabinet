@@ -35,9 +35,11 @@
                                 <a href="{% url 'profile' %}" class="dropdown-item">
                                     Профиль
                                 </a>
-                                <a href="{% url 'application_create' %}" class="dropdown-item">
-                                    Подать заявку
-                                </a>
+                                {% if not user.is_admin_user %}
+                                    <a href="{% url 'application_create' %}" class="dropdown-item">
+                                        Подать заявку
+                                    </a>
+                                {% endif %}
                                 <div class="dropdown-divider"></div>
                                 <a href="{% url 'logout' %}" class="dropdown-item">
                                     Выход

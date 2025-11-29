@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Панель управления администратора - Платформа психолога{% endblock %}
+
+{% block content %}
+<section class="feedback-form-section" style="background-color: #ffffff;">
+    <div class="section-content" style="background-color: #ffffff; padding: 2rem;">
+        <h2>Панель управления администратора</h2>
+        
+        <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Управление пользователями</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
+            <thead>
+                <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                    <th style="padding: 1rem; text-align: left; font-weight: 600;">Имя пользователя</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600;">Email</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600;">Текущая роль</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600;">Дата регистрации</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600;">Изменить роль</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user_item in users %}
+                    <tr style="border-bottom: 1px solid #dee2e6; background-color: #ffffff;">
+                        <td style="padding: 1rem;">{{ user_item.username }}</td>
+                        <td style="padding: 1rem;">{{ user_item.email }}</td>
+                        <td style="padding: 1rem;">{{ user_item.get_role_display }}</td>
+                        <td style="padding: 1rem;">{{ user_item.created_at|date:"d.m.Y H:i" }}</td>
+                        <td style="padding: 1rem;">
+                            <form method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ user_item.id }}">
+                                <input type="hidden" name="change_role" value="1">
+                                <select name="role" onchange="this.form.submit()" style="padding: 0.5rem; border: 1px solid #dee2e6; border-radius: 4px;">
+                                    <option value="user" {% if user_item.role == "user" %}selected{% endif %}>Пользователь</option>
+                                    <option value="psychologist" {% if user_item.role == "psychologist" %}selected{% endif %}>Психолог</option>
+                                    <option value="admin" {% if user_item.role == "admin" %}selected{% endif %}>Администратор</option>
+                                </select>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3 style="margin-top: 3rem; margin-bottom: 1rem;">Формы обратной связи</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
+            <thead>
+                <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                    <th style="padding: 1rem; text-align: left; font-weight: 600;">Имя</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600;">Email</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600;">Тема</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600;">Статус</th>
+                    <th style="padding: 1rem; text-align: left; font-weight: 600;">Дата</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for feedback in feedback_forms %}
+                    <tr style="border-bottom: 1px solid #dee2e6; background-color: #ffffff;">
+                        <td style="padding: 1rem;">{{ feedback.name }}</td>
+                        <td style="padding: 1rem;">{{ feedback.email }}</td>
+                        <td style="padding: 1rem;">{{ feedback.subject }}</td>
+                        <td style="padding: 1rem;">
+                            <span class="application-status status-{{ feedback.status }}">
+                                {{ feedback.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="padding: 1rem;">{{ feedback.created_at|date:"d.m.Y H:i" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" style="padding: 1rem; text-align: center;">Нет форм обратной связи</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
+

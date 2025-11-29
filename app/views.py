@@ -10,7 +10,7 @@ from .forms import (
     PasswordChangeForm,
     ApplicationForm,
 )
-from .models import User, Application
+from .models import User, Application, FeedbackForm
 
 
 def index(request):
@@ -179,6 +179,8 @@ def psychologists_list(request):
 @login_required
 def dashboard_student(request):
     """Панель управления для студентов"""
+    if request.user.is_admin_user():
+        return redirect("dashboard_admin")
     if request.user.is_psychologist():
         return redirect("index")
     
@@ -188,4 +190,33 @@ def dashboard_student(request):
         request,
         "dashboard_student.html",
         {"applications": applications},
+    )
+
+
+@login_required
+def dashboard_admin(request):
+    """Панель управления для администраторов"""
+    if not request.user.is_admin_user():
+        return redirect("index")
+    
+    if request.method == "POST" and "change_role" in request.POST:
+        user_id = request.POST.get("user_id")
+        new_role = request.POST.get("role")
+        if user_id and new_role:
+            user = get_object_or_404(User, id=user_id)
+            user.role = new_role
+            user.save()
+            messages.success(request, f"Роль пользователя {user.username} изменена на {user.get_role_display()}")
+            return redirect("dashboard_admin")
+    
+    users = User.objects.all().order_by("-created_at")
+    feedback_forms = FeedbackForm.objects.all().order_by("-created_at")
+    
+    return render(
+        request,
+        "dashboard_admin.html",
+        {
+            "users": users,
+            "feedback_forms": feedback_forms,
+        },
     )
