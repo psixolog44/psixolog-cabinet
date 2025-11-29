@@ -2,7 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import FeedbackFormForm, RegisterForm, LoginForm, ProfileForm
+from .forms import (
+    FeedbackFormForm,
+    RegisterForm,
+    LoginForm,
+    ProfileForm,
+    PasswordChangeForm,
+)
 
 
 def index(request):
@@ -93,12 +99,25 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
+    profile_form = ProfileForm(instance=request.user)
+    password_form = PasswordChangeForm(user=request.user)
+
     if request.method == "POST":
-        form = ProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Профиль успешно обновлен.")
-            return redirect("profile")
-    else:
-        form = ProfileForm(instance=request.user)
-    return render(request, "profile.html", {"form": form})
+        if "update_profile" in request.POST:
+            profile_form = ProfileForm(request.POST, instance=request.user)
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, "Профиль успешно обновлен.")
+                return redirect("profile")
+        elif "change_password" in request.POST:
+            password_form = PasswordChangeForm(user=request.user, data=request.POST)
+            if password_form.is_valid():
+                password_form.save()
+                messages.success(request, "Пароль успешно изменен.")
+                return redirect("profile")
+
+    return render(
+        request,
+        "profile.html",
+        {"profile_form": profile_form, "password_form": password_form},
+    )

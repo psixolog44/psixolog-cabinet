@@ -30,3 +30,21 @@ document.addEventListener('click', function(event) {
     }
 });
 
+function showTab(tabId, buttonElement) {
+    var tabs = document.querySelectorAll('.tab-content');
+    var buttons = document.querySelectorAll('.tab-button');
+    
+    tabs.forEach(function(tab) {
+        tab.classList.remove('active');
+    });
+    
+    buttons.forEach(function(btn) {
+        btn.classList.remove('active');
+    });
+    
+    document.getElementById(tabId).classList.add('active');
+    if (buttonElement) {
+        buttonElement.classList.add('active');
+    }
+}
+
