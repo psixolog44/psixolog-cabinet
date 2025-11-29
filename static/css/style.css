@@ -735,28 +735,6 @@ section h2 {
     flex-wrap: wrap;
 }
 
-.feedback-section {
-    background: #ffffff;
-}
-
-.feedback-section .section-content {
-    padding: 2rem 0;
-}
-
-.feedback-section h2 {
-    margin-bottom: 1rem;
-}
-
-.feedback-section p {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #5a6c7d;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-    margin-top: 0;
-}
-
 .feedback-form-section {
     background: #f5f0ff;
 }
@@ -772,6 +750,22 @@ section h2 {
     padding: 3rem;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-form-wrapper h2 {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.feedback-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #5a6c7d;
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
 .feedback-form {

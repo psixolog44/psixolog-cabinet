@@ -3,16 +3,11 @@
 {% block title %}Обратная связь - Платформа психолога{% endblock %}
 
 {% block content %}
-<section class="feedback-section">
-    <div class="section-content">
-        <h2>Обратная связь</h2>
-        <p>Мы ценим ваше мнение. Оставьте сообщение, и мы обязательно с вами свяжемся</p>
-    </div>
-</section>
-
 <section class="feedback-form-section">
     <div class="section-content">
         <div class="feedback-form-wrapper">
+            <h2>Обратная связь</h2>
+            <p class="feedback-description">Мы ценим ваше мнение. Оставьте сообщение, и мы обязательно с вами свяжемся</p>
             <form method="post" class="feedback-form">
                 {% csrf_token %}
                 
