@@ -162,6 +162,11 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <div class="excel-export-container">
+                    <a href="{% url 'export_meetings_excel' %}{% if current_meeting_date %}?meeting_date={{ current_meeting_date }}{% endif %}" class="btn btn-success excel-export-btn">
+                        📥 Скачать Excel файл встреч
+                    </a>
+                </div>
             </div>
             {% else %}
                 <p class="no-meetings">Нет назначенных встреч.</p>

@@ -2140,3 +2140,41 @@ textarea.form-control {
     font-size: 1.1rem;
     margin-bottom: 2rem;
 }
+
+.meetings-section {
+    margin-top: 3rem;
+}
+
+.excel-export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.excel-export-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    background: linear-gradient(135deg, #218838 0%, #1ea080 100%);
+}
+
+.excel-export-btn:active {
+    transform: translateY(0);
+}
+
+.excel-export-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    padding-top: 1rem;
+}

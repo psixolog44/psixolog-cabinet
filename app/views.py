@@ -3,6 +3,10 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.http import HttpResponse
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment, PatternFill
+from datetime import datetime
 from .forms import (
     FeedbackFormForm,
     RegisterForm,
@@ -457,3 +461,82 @@ def feedback_detail_admin(request, feedback_id):
             "breadcrumbs": breadcrumbs,
         },
     )
+
+
+@login_required
+def export_meetings_excel(request):
+    """Экспорт встреч в Excel файл для администраторов"""
+    if not request.user.is_admin_user():
+        return redirect("index")
+    
+    meetings = Meeting.objects.all().select_related("student", "psychologist", "application")
+    
+    meeting_date_filter = request.GET.get("meeting_date")
+    if meeting_date_filter:
+        meetings = meetings.filter(date=meeting_date_filter)
+    
+    meetings = meetings.order_by("date", "time")
+    
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Встречи"
+    
+    header_fill = PatternFill(start_color="667eea", end_color="667eea", fill_type="solid")
+    header_font = Font(bold=True, color="FFFFFF", size=12)
+    
+    headers = [
+        "ID",
+        "Студент",
+        "Email студента",
+        "Психолог",
+        "Email психолога",
+        "Дата встречи",
+        "Время встречи",
+        "ID заявки",
+        "Дата создания",
+    ]
+    
+    for col_num, header in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.value = header
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = Alignment(horizontal="center", vertical="center")
+    
+    for row_num, meeting in enumerate(meetings, 2):
+        psychologist_name = (
+            f"{meeting.psychologist.first_name} {meeting.psychologist.last_name}".strip()
+            if meeting.psychologist.first_name or meeting.psychologist.last_name
+            else meeting.psychologist.username
+        )
+        
+        ws.cell(row=row_num, column=1, value=meeting.id)
+        ws.cell(row=row_num, column=2, value=meeting.student.username)
+        ws.cell(row=row_num, column=3, value=meeting.student.email)
+        ws.cell(row=row_num, column=4, value=psychologist_name)
+        ws.cell(row=row_num, column=5, value=meeting.psychologist.email)
+        ws.cell(row=row_num, column=6, value=meeting.date.strftime("%d.%m.%Y"))
+        ws.cell(row=row_num, column=7, value=meeting.time.strftime("%H:%M"))
+        ws.cell(row=row_num, column=8, value=meeting.application.id if meeting.application else "")
+        ws.cell(row=row_num, column=9, value=meeting.created_at.strftime("%d.%m.%Y %H:%M"))
+    
+    for col in ws.columns:
+        max_length = 0
+        column = col[0].column_letter
+        for cell in col:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except:
+                pass
+        adjusted_width = min(max_length + 2, 50)
+        ws.column_dimensions[column].width = adjusted_width
+    
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    filename = f"meetings_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    
+    wb.save(response)
+    return response
