@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import FeedbackFormForm
 
 
 def index(request):
@@ -23,4 +25,16 @@ def services(request):
 
 def support(request):
     return render(request, 'support.html')
+
+
+def feedback(request):
+    if request.method == "POST":
+        form = FeedbackFormForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.")
+            return redirect("feedback")
+    else:
+        form = FeedbackFormForm()
+    return render(request, "feedback.html", {"form": form})
 
