@@ -1,30 +1,32 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import FeedbackFormForm
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from .forms import FeedbackFormForm, RegisterForm, LoginForm
 
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, "index.html")
 
 
 def about(request):
-    return render(request, 'about.html')
+    return render(request, "about.html")
 
 
 def faq(request):
-    return render(request, 'faq.html')
+    return render(request, "faq.html")
 
 
 def contacts(request):
-    return render(request, 'contacts.html')
+    return render(request, "contacts.html")
 
 
 def services(request):
-    return render(request, 'services.html')
+    return render(request, "services.html")
 
 
 def support(request):
-    return render(request, 'support.html')
+    return render(request, "support.html")
 
 
 def feedback(request):
@@ -32,9 +34,11 @@ def feedback(request):
         form = FeedbackFormForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.")
+            messages.success(
+                request,
+                "Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.",
+            )
             return redirect("feedback")
     else:
         form = FeedbackFormForm()
     return render(request, "feedback.html", {"form": form})
-
