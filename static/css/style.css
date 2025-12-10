@@ -424,6 +424,17 @@ main {
     box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
 }
 
+.btn-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+}
+
 footer {
     background-color: rgba(44, 62, 80, 0.9);
     color: white;
@@ -2177,4 +2188,282 @@ textarea.form-control {
     justify-content: flex-end;
     margin-top: 1rem;
     padding-top: 1rem;
+}
+
+/* Стили для страницы подтверждения удаления */
+.delete-confirm-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    padding: 2rem 0;
+}
+
+.delete-confirm-box {
+    max-width: 650px;
+    width: 100%;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f5ff 100%);
+    padding: 3rem;
+    border-radius: 24px;
+    box-shadow: 0 15px 50px rgba(220, 53, 69, 0.2);
+    border: 2px solid rgba(220, 53, 69, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.delete-confirm-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #dc3545 0%, #c82333 100%);
+}
+
+.delete-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.delete-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.delete-header h2 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.delete-subtitle {
+    color: #5a6c7d;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.user-info-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    border: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.user-info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.user-details {
+    flex: 1;
+}
+
+.user-details h3 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.user-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+    color: #5a6c7d;
+    font-size: 0.95rem;
+}
+
+.detail-icon {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+.warning-box {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+    padding: 1.75rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    border: 2px solid #fecaca;
+    border-left: 5px solid #dc3545;
+}
+
+.warning-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    color: #dc3545;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.warning-icon {
+    font-size: 1.5rem;
+}
+
+.warning-box p {
+    color: #7f1d1d;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.warning-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.warning-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    color: #7f1d1d;
+    font-size: 0.95rem;
+}
+
+.list-icon {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.delete-form {
+    margin-top: 2rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-delete {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+}
+
+.btn-delete .btn-icon {
+    font-size: 1.3rem;
+}
+
+.btn-cancel {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-cancel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.text-muted {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.password-input-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.password-input-wrapper .form-control {
+    padding-right: 3.5rem;
+    width: 100%;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+    border-radius: 6px;
+    pointer-events: auto;
+}
+
+.password-toggle-btn:hover {
+    background-color: rgba(102, 126, 234, 0.1);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.password-toggle-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.eye-icon {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    color: #5a6c7d;
+}
+
+.password-toggle-btn:hover .eye-icon {
+    color: #667eea;
+}
+
+.password-toggle-btn.active .eye-icon {
+    opacity: 0.7;
 }

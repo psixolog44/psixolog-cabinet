@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.http import HttpResponse
+from django.core.exceptions import ValidationError
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 from .forms import (
     FeedbackFormForm,
     RegisterForm,
@@ -123,22 +127,48 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    profile_form = ProfileForm(instance=request.user)
-    password_form = PasswordChangeForm(user=request.user)
-
     if request.method == "POST":
         if "update_profile" in request.POST:
             profile_form = ProfileForm(request.POST, instance=request.user)
+            password_form = PasswordChangeForm(user=request.user)
             if profile_form.is_valid():
-                profile_form.save()
-                messages.success(request, "Профиль успешно обновлен.")
-                return redirect("profile")
+                try:
+                    profile_form.save()
+                    messages.success(request, "Профиль успешно обновлен.")
+                    return redirect("profile")
+                except ValidationError as e:
+                    logger.error(f"Validation error in profile update: {e}")
+                    messages.error(request, f"Ошибка валидации: {', '.join(e.messages)}")
+                except Exception as e:
+                    logger.error(f"Error updating profile: {str(e)}", exc_info=True)
+                    messages.error(request, "Произошла ошибка при обновлении профиля. Пожалуйста, попробуйте еще раз.")
+            else:
+                # Форма невалидна, показываем ошибки
+                messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
         elif "change_password" in request.POST:
+            profile_form = ProfileForm(instance=request.user)
             password_form = PasswordChangeForm(user=request.user, data=request.POST)
             if password_form.is_valid():
-                password_form.save()
-                messages.success(request, "Пароль успешно изменен.")
-                return redirect("profile")
+                try:
+                    user = password_form.save()
+                    update_session_auth_hash(request, user)  # Важно! Обновляет сессию после смены пароля
+                    messages.success(request, "Пароль успешно изменен.")
+                    return redirect("profile")
+                except ValidationError as e:
+                    logger.error(f"Validation error in password change: {e}")
+                    messages.error(request, f"Ошибка валидации: {', '.join(e.messages)}")
+                except Exception as e:
+                    logger.error(f"Error changing password: {str(e)}", exc_info=True)
+                    messages.error(request, "Произошла ошибка при смене пароля. Пожалуйста, попробуйте еще раз.")
+            else:
+                # Форма невалидна, показываем ошибки
+                messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
+        else:
+            profile_form = ProfileForm(instance=request.user)
+            password_form = PasswordChangeForm(user=request.user)
+    else:
+        profile_form = ProfileForm(instance=request.user)
+        password_form = PasswordChangeForm(user=request.user)
 
     breadcrumbs = get_breadcrumbs([{"title": "Профиль", "url": ""}])
     return render(
@@ -254,7 +284,7 @@ def dashboard_admin(request):
             user = get_object_or_404(User, id=user_id)
             user.role = new_role
             user.save()
-            messages.success(request, f"Роль пользователя {user.username} изменена на {user.get_role_display()}")
+            messages.success(request, f"Роль пользователя {user.get_display_name()} изменена на {user.get_role_display()}")
             return redirect("dashboard_admin")
     
     users = User.objects.all()
@@ -351,6 +381,7 @@ def application_detail_psychologist(request, application_id):
                 messages.error(request, "Нельзя отправлять ответы для завершенной заявки.")
                 return redirect("application_detail_psychologist", application_id=application.id)
             consultation_form = ConsultationForm(request.POST)
+            meeting_form = MeetingForm(psychologist=request.user)
             if consultation_form.is_valid():
                 consultation = consultation_form.save(commit=False)
                 consultation.application = application
@@ -366,7 +397,8 @@ def application_detail_psychologist(request, application_id):
             if application.status == "completed":
                 messages.error(request, "Нельзя назначать встречи для завершенной заявки.")
                 return redirect("application_detail_psychologist", application_id=application.id)
-            meeting_form = MeetingForm(request.POST)
+            meeting_form = MeetingForm(request.POST, psychologist=request.user)
+            consultation_form = ConsultationForm()
             if meeting_form.is_valid():
                 meeting = meeting_form.save(commit=False)
                 meeting.student = application.user
@@ -375,15 +407,34 @@ def application_detail_psychologist(request, application_id):
                 meeting.save()
                 messages.success(request, "Встреча успешно назначена.")
                 return redirect("application_detail_psychologist", application_id=application.id)
+            else:
+
+                errors_attr = getattr(meeting_form, 'non_field_errors', None)
+                if errors_attr is not None:
+                    if callable(errors_attr):
+                        errors = errors_attr()
+                    else:
+                        errors = errors_attr
+                    
+                    if errors:
+                        for error in errors:
+                            messages.error(request, str(error))
+                    else:
+                        messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
+                else:
+                    messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
         elif "complete_application" in request.POST:
             if application.psychologist == request.user:
                 application.status = "completed"
                 application.save()
                 messages.success(request, "Заявка успешно завершена.")
                 return redirect("application_detail_psychologist", application_id=application.id)
+        else:
+            consultation_form = ConsultationForm()
+            meeting_form = MeetingForm(psychologist=request.user)
     else:
         consultation_form = ConsultationForm()
-        meeting_form = MeetingForm()
+        meeting_form = MeetingForm(psychologist=request.user)
     
     consultations = application.consultations.all().order_by("-created_at")
     
@@ -464,6 +515,52 @@ def feedback_detail_admin(request, feedback_id):
 
 
 @login_required
+def delete_user(request, user_id):
+    """Удаление пользователя администратором"""
+    if not request.user.is_admin_user():
+        messages.error(request, "У вас нет прав для выполнения этого действия.")
+        return redirect("index")
+    
+    user_to_delete = get_object_or_404(User, id=user_id)
+    
+    # Проверка: администратор не может удалить сам себя
+    if user_to_delete.id == request.user.id:
+        messages.error(request, "Вы не можете удалить свой собственный аккаунт.")
+        return redirect("dashboard_admin")
+    
+    # Проверка: нельзя удалить последнего администратора
+    admin_count = User.objects.filter(role="admin").count()
+    if user_to_delete.role == "admin" and admin_count <= 1:
+        messages.error(request, "Нельзя удалить последнего администратора.")
+        return redirect("dashboard_admin")
+    
+    if request.method == "POST":
+        try:
+            user_display_name = user_to_delete.get_display_name()
+            user_to_delete.delete()
+            messages.success(request, f"Пользователь {user_display_name} успешно удален.")
+            return redirect("dashboard_admin")
+        except Exception as e:
+            logger.error(f"Error deleting user: {str(e)}", exc_info=True)
+            messages.error(request, "Произошла ошибка при удалении пользователя.")
+            return redirect("dashboard_admin")
+    
+    # GET запрос - показываем страницу подтверждения
+    breadcrumbs = get_breadcrumbs([
+        {"title": "Панель управления", "url": reverse("dashboard_admin")},
+        {"title": "Удаление пользователя", "url": ""},
+    ])
+    return render(
+        request,
+        "delete_user_confirm.html",
+        {
+            "user_to_delete": user_to_delete,
+            "breadcrumbs": breadcrumbs,
+        },
+    )
+
+
+@login_required
 def export_meetings_excel(request):
     """Экспорт встреч в Excel файл для администраторов"""
     if not request.user.is_admin_user():
@@ -504,14 +601,11 @@ def export_meetings_excel(request):
         cell.alignment = Alignment(horizontal="center", vertical="center")
     
     for row_num, meeting in enumerate(meetings, 2):
-        psychologist_name = (
-            f"{meeting.psychologist.first_name} {meeting.psychologist.last_name}".strip()
-            if meeting.psychologist.first_name or meeting.psychologist.last_name
-            else meeting.psychologist.username
-        )
+        psychologist_name = meeting.psychologist.get_display_name()
+        student_name = meeting.student.get_display_name()
         
         ws.cell(row=row_num, column=1, value=meeting.id)
-        ws.cell(row=row_num, column=2, value=meeting.student.username)
+        ws.cell(row=row_num, column=2, value=student_name)
         ws.cell(row=row_num, column=3, value=meeting.student.email)
         ws.cell(row=row_num, column=4, value=psychologist_name)
         ws.cell(row=row_num, column=5, value=meeting.psychologist.email)

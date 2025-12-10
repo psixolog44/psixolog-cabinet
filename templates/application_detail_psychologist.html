@@ -16,10 +16,7 @@
                 <strong>Тема:</strong> {{ application.title }}
             </div>
             <div class="application-info-item">
-                <strong>Студент:</strong> {{ application.user.username }}
-                {% if application.user.first_name or application.user.last_name %}
-                    ({{ application.user.first_name }} {{ application.user.last_name }})
-                {% endif %}
+                <strong>Студент:</strong> {{ application.user.get_display_name }}
             </div>
             <div class="application-info-item">
                 <strong>Email студента:</strong> {{ application.user.email }}
@@ -33,10 +30,7 @@
             <div class="application-info-item">
                 <strong>Психолог:</strong>
                 {% if application.psychologist %}
-                    {{ application.psychologist.username }}
-                    {% if application.psychologist.first_name or application.psychologist.last_name %}
-                        ({{ application.psychologist.first_name }} {{ application.psychologist.last_name }})
-                    {% endif %}
+                    {{ application.psychologist.get_display_name }}
                 {% else %}
                     Не назначен
                 {% endif %}
@@ -101,6 +95,13 @@
                     <form method="post" class="meeting-form">
                         {% csrf_token %}
                         <input type="hidden" name="add_meeting" value="1">
+                        {% if meeting_form.non_field_errors %}
+                            <div class="form-error" style="margin-bottom: 1rem; padding: 1rem; background-color: #fee; border: 1px solid #fcc; border-radius: 4px; color: #c33;">
+                                {% for error in meeting_form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                         <div class="form-group">
                             <label for="{{ meeting_form.date.id_for_label }}">
                                 {{ meeting_form.date.label }}
@@ -131,10 +132,7 @@
                 {% for consultation in consultations %}
                     <div class="consultation-card">
                         <div class="consultation-card-header">
-                            <strong>{{ consultation.psychologist.username }}</strong>
-                            {% if consultation.psychologist.first_name or consultation.psychologist.last_name %}
-                                ({{ consultation.psychologist.first_name }} {{ consultation.psychologist.last_name }})
-                            {% endif %}
+                            <strong>{{ consultation.psychologist.get_display_name }}</strong>
                             <span class="consultation-date">
                                 {{ consultation.created_at|date:"d.m.Y H:i" }}
                             </span>

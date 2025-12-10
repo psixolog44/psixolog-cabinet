@@ -20,13 +20,7 @@
             <div class="psychologists-grid">
                 {% for psychologist in psychologists %}
                     <div class="psychologist-card">
-                        <h3>
-                            {% if psychologist.first_name or psychologist.last_name %}
-                                {{ psychologist.first_name }} {{ psychologist.last_name }}
-                            {% else %}
-                                {{ psychologist.username }}
-                            {% endif %}
-                        </h3>
+                        <h3>{{ psychologist.get_display_name }}</h3>
                         <p>@{{ psychologist.username }}</p>
                         {% if psychologist.email %}
                             <p>📧 {{ psychologist.email }}</p>

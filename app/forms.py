@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
+from datetime import datetime, timedelta
 from .models import FeedbackForm, User, Application, Consultation, Meeting
 
 
@@ -123,6 +124,16 @@ class ProfileForm(forms.ModelForm):
             "last_name": "Фамилия",
         }
 
+    def clean_first_name(self):
+        """Очистка поля first_name - преобразует пустую строку в None"""
+        first_name = self.cleaned_data.get("first_name")
+        return first_name.strip() if first_name else ""
+
+    def clean_last_name(self):
+        """Очистка поля last_name - преобразует пустую строку в None"""
+        last_name = self.cleaned_data.get("last_name")
+        return last_name.strip() if last_name else ""
+
 
 class PasswordChangeForm(forms.Form):
     old_password = forms.CharField(
@@ -204,18 +215,18 @@ class ApplicationForm(forms.ModelForm):
         self.fields["psychologist"].queryset = User.objects.filter(role="psychologist")
         self.fields["psychologist"].required = False
         self.fields["psychologist"].empty_label = "Не выбирать"
-        
+
         def label_from_instance(obj):
             if obj.first_name or obj.last_name:
                 return f"{obj.first_name} {obj.last_name}".strip()
             return obj.username
-        
+
         self.fields["psychologist"].label_from_instance = label_from_instance
 
 
 class ConsultationForm(forms.ModelForm):
     """Форма для ответа психолога на заявку"""
-    
+
     class Meta:
         model = Consultation
         fields = ["message"]
@@ -235,7 +246,7 @@ class ConsultationForm(forms.ModelForm):
 
 class MeetingForm(forms.ModelForm):
     """Форма для назначения встречи"""
-    
+
     class Meta:
         model = Meeting
         fields = ["date", "time"]
@@ -257,3 +268,51 @@ class MeetingForm(forms.ModelForm):
             "date": "Дата встречи",
             "time": "Время встречи",
         }
+
+    def __init__(self, *args, psychologist=None, instance=None, **kwargs):
+        super().__init__(*args, instance=instance, **kwargs)
+        self.psychologist = psychologist
+
+    def clean(self):
+        cleaned_data = super().clean()
+        date = cleaned_data.get("date")
+        time = cleaned_data.get("time")
+        psychologist = self.psychologist
+
+        if not date or not time or not psychologist:
+            return cleaned_data
+
+        meeting_datetime = datetime.combine(date, time)
+
+        conflicting_meetings = Meeting.objects.filter(
+            psychologist=psychologist, date=date, time=time
+        )
+
+        if self.instance and self.instance.pk:
+            conflicting_meetings = conflicting_meetings.exclude(pk=self.instance.pk)
+
+        if conflicting_meetings.exists():
+            raise forms.ValidationError(
+                "На это время уже назначена встреча. Пожалуйста, выберите другое время."
+            )
+
+        nearby_meetings = Meeting.objects.filter(
+            psychologist=psychologist, date=date
+        ).exclude(time=time)
+
+        if self.instance and self.instance.pk:
+            nearby_meetings = nearby_meetings.exclude(pk=self.instance.pk)
+
+        for meeting in nearby_meetings:
+            meeting_datetime_obj = datetime.combine(meeting.date, meeting.time)
+            time_diff = abs(
+                (meeting_datetime - meeting_datetime_obj).total_seconds() / 60
+            )
+
+            if time_diff < 30:
+                raise forms.ValidationError(
+                    f"Между встречами должен быть интервал минимум 30 минут. "
+                    f"У вас уже есть встреча {meeting.date.strftime('%d.%m.%Y')} в {meeting.time.strftime('%H:%M')}."
+                )
+
+        return cleaned_data

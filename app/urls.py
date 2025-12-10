@@ -49,4 +49,5 @@ urlpatterns = [
     path("my-applications/", views.my_applications, name="my_applications"),
     path("feedback/<int:feedback_id>/", views.feedback_detail_admin, name="feedback_detail_admin"),
     path("dashboard/admin/export-meetings/", views.export_meetings_excel, name="export_meetings_excel"),
+    path("dashboard/admin/delete-user/<int:user_id>/", views.delete_user, name="delete_user"),
 ]

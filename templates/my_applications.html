@@ -19,7 +19,7 @@
                             </div>
                             <p class="application-description">{{ application.description|truncatewords:30 }}</p>
                             <div class="application-meta">
-                                <span>Психолог: {% if application.psychologist %}{{ application.psychologist.username }}{% else %}Не назначен{% endif %}</span>
+                                <span>Психолог: {% if application.psychologist %}{{ application.psychologist.get_display_name }}{% else %}Не назначен{% endif %}</span>
                                 <span>Дата: {{ application.created_at|date:"d.m.Y H:i" }}</span>
                             </div>
                         </div>

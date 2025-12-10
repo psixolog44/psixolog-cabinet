@@ -43,7 +43,7 @@
                     {% for application in applications %}
                         <tr>
                             <td>{{ application.title }}</td>
-                            <td>{{ application.user.username }}</td>
+                            <td>{{ application.user.get_display_name }}</td>
                             <td>
                                 <span class="application-status status-{{ application.status }}">
                                     {{ application.get_status_display }}
@@ -79,7 +79,7 @@
                     {% for application in general_applications %}
                         <tr>
                             <td>{{ application.title }}</td>
-                            <td>{{ application.user.username }}</td>
+                            <td>{{ application.user.get_display_name }}</td>
                             <td>{{ application.created_at|date:"d.m.Y H:i" }}</td>
                             <td>
                                 <a href="{% url 'application_detail_psychologist' application.id %}" class="btn btn-primary btn-sm">
@@ -108,7 +108,7 @@
                     <tbody>
                         {% for meeting in meetings %}
                             <tr>
-                                <td>{{ meeting.student.username }}</td>
+                                <td>{{ meeting.student.get_display_name }}</td>
                                 <td>{{ meeting.date|date:"d.m.Y" }}</td>
                                 <td>{{ meeting.time|date:"H:i" }}</td>
                             </tr>

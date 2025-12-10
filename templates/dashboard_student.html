@@ -50,7 +50,7 @@
                             </td>
                             <td>
                                 {% if application.psychologist %}
-                                    {{ application.psychologist.username }}
+                                    {{ application.psychologist.get_display_name }}
                                 {% else %}
                                     Не назначен
                                 {% endif %}
@@ -94,13 +94,7 @@
                     <tbody>
                         {% for meeting in meetings %}
                             <tr>
-                                <td>
-                                    {% if meeting.psychologist.first_name or meeting.psychologist.last_name %}
-                                        {{ meeting.psychologist.first_name }} {{ meeting.psychologist.last_name }}
-                                    {% else %}
-                                        {{ meeting.psychologist.username }}
-                                    {% endif %}
-                                </td>
+                                <td>{{ meeting.psychologist.get_display_name }}</td>
                                 <td>{{ meeting.date|date:"d.m.Y" }}</td>
                                 <td>{{ meeting.time|date:"H:i" }}</td>
                             </tr>

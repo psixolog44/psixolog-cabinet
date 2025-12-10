@@ -75,7 +75,15 @@
                                 <span class="label-icon">🔒</span>
                                 {{ password_form.old_password.label }}
                             </label>
-                            {{ password_form.old_password }}
+                            <div class="password-input-wrapper">
+                                {{ password_form.old_password }}
+                                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('{{ password_form.old_password.id_for_label }}', this)">
+                                    <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                            </div>
                             {% if password_form.old_password.errors %}
                                 <div class="form-error">{{ password_form.old_password.errors }}</div>
                             {% endif %}
@@ -86,7 +94,15 @@
                                 <span class="label-icon">🔒</span>
                                 {{ password_form.new_password1.label }}
                             </label>
-                            {{ password_form.new_password1 }}
+                            <div class="password-input-wrapper">
+                                {{ password_form.new_password1 }}
+                                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('{{ password_form.new_password1.id_for_label }}', this)">
+                                    <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                            </div>
                             {% if password_form.new_password1.errors %}
                                 <div class="form-error">{{ password_form.new_password1.errors }}</div>
                             {% endif %}
@@ -97,7 +113,15 @@
                                 <span class="label-icon">🔒</span>
                                 {{ password_form.new_password2.label }}
                             </label>
-                            {{ password_form.new_password2 }}
+                            <div class="password-input-wrapper">
+                                {{ password_form.new_password2 }}
+                                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('{{ password_form.new_password2.id_for_label }}', this)">
+                                    <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                            </div>
                             {% if password_form.new_password2.errors %}
                                 <div class="form-error">{{ password_form.new_password2.errors }}</div>
                             {% endif %}

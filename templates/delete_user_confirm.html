@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Удаление пользователя - Платформа психолога{% endblock %}
+
+{% block content %}
+<section class="feedback-form-section">
+    <div class="section-content">
+        <div class="delete-confirm-wrapper">
+            <div class="delete-confirm-box">
+                <div class="delete-header">
+                    <div class="delete-icon">⚠️</div>
+                    <h2>Подтверждение удаления</h2>
+                    <p class="delete-subtitle">Вы собираетесь удалить пользователя из системы</p>
+                </div>
+                
+                <div class="user-info-card">
+                    <div class="user-avatar-large">
+                        <span>{{ user_to_delete.get_display_name|first|upper }}</span>
+                    </div>
+                    <div class="user-details">
+                        <h3>{{ user_to_delete.get_display_name }}</h3>
+                        <div class="user-detail-item">
+                            <span class="detail-icon">📧</span>
+                            <span>{{ user_to_delete.email }}</span>
+                        </div>
+                        <div class="user-detail-item">
+                            <span class="detail-icon">👤</span>
+                            <span>{{ user_to_delete.get_role_display }}</span>
+                        </div>
+                        <div class="user-detail-item">
+                            <span class="detail-icon">📅</span>
+                            <span>Зарегистрирован: {{ user_to_delete.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="warning-box">
+                    <div class="warning-header">
+                        <span class="warning-icon">🚨</span>
+                        <strong>Внимание! Это действие нельзя отменить</strong>
+                    </div>
+                    <p>Все данные пользователя будут безвозвратно удалены:</p>
+                    <ul class="warning-list">
+                        <li><span class="list-icon">📋</span> Все заявки пользователя</li>
+                        <li><span class="list-icon">💬</span> Все консультации и сообщения</li>
+                        <li><span class="list-icon">📅</span> Все назначенные встречи</li>
+                        <li><span class="list-icon">📊</span> Вся статистика и история</li>
+                    </ul>
+                </div>
+                
+                <form method="post" class="delete-form">
+                    {% csrf_token %}
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-danger btn-delete">
+                            <span class="btn-icon">🗑️</span>
+                            <span>Да, удалить пользователя</span>
+                        </button>
+                        <a href="{% url 'dashboard_admin' %}" class="btn btn-secondary btn-cancel">
+                            <span>Отмена</span>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

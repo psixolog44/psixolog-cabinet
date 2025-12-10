@@ -34,6 +34,15 @@ class User(AbstractUser):
         """Проверка, является ли пользователь администратором"""
         return self.role == "admin" or self.is_superuser
 
+    def get_display_name(self):
+        """Возвращает имя и фамилию, если они есть, иначе username"""
+        first_name = self.first_name or ""
+        last_name = self.last_name or ""
+        full_name = f"{first_name} {last_name}".strip()
+        if full_name:
+            return full_name
+        return self.username or ""
+
 
 class Application(models.Model):
     """Модель заявки на консультацию к психологу"""
