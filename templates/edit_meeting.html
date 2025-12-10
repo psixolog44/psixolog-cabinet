@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактирование встречи - Платформа психолога{% endblock %}
+
+{% block content %}
+<section class="feedback-form-section application-detail-section">
+    <div class="section-content application-detail-content">
+        <div class="back-button-container">
+            <a href="{% url 'dashboard_psychologist' %}" class="btn btn-secondary">← Назад к панели управления</a>
+        </div>
+        
+        <h2>Редактирование встречи</h2>
+        
+        <div class="meeting-info-box">
+            <div class="application-info-item">
+                <strong>Студент:</strong> {{ meeting.student.get_display_name }}
+            </div>
+            <div class="application-info-item">
+                <strong>Email студента:</strong> {{ meeting.student.email }}
+            </div>
+            <div class="application-info-item">
+                <strong>Текущая дата:</strong> {{ meeting.date|date:"d.m.Y" }}
+            </div>
+            <div class="application-info-item">
+                <strong>Текущее время:</strong> {{ meeting.time|date:"H:i" }}
+            </div>
+        </div>
+        
+        <div class="meeting-section">
+            <h3>Изменить дату и время встречи</h3>
+            <form method="post" class="meeting-form">
+                {% csrf_token %}
+                {% if meeting_form.non_field_errors %}
+                    <div class="form-error" style="margin-bottom: 1rem; padding: 1rem; background-color: #fee; border: 1px solid #fcc; border-radius: 4px; color: #c33;">
+                        {% for error in meeting_form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="{{ meeting_form.date.id_for_label }}">
+                        {{ meeting_form.date.label }}
+                    </label>
+                    {{ meeting_form.date }}
+                    {% if meeting_form.date.errors %}
+                        <div class="form-error">{{ meeting_form.date.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ meeting_form.time.id_for_label }}">
+                        {{ meeting_form.time.label }}
+                    </label>
+                    {{ meeting_form.time }}
+                    {% if meeting_form.time.errors %}
+                        <div class="form-error">{{ meeting_form.time.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-submit-margin">Сохранить изменения</button>
+                    <a href="{% url 'dashboard_psychologist' %}" class="btn btn-secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

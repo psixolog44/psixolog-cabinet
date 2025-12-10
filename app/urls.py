@@ -50,4 +50,6 @@ urlpatterns = [
     path("feedback/<int:feedback_id>/", views.feedback_detail_admin, name="feedback_detail_admin"),
     path("dashboard/admin/export-meetings/", views.export_meetings_excel, name="export_meetings_excel"),
     path("dashboard/admin/delete-user/<int:user_id>/", views.delete_user, name="delete_user"),
+    path("meeting/edit/<int:meeting_id>/", views.edit_meeting, name="edit_meeting"),
+    path("meeting/delete/<int:meeting_id>/", views.delete_meeting, name="delete_meeting"),
 ]

@@ -138,12 +138,16 @@ def profile_view(request):
                     return redirect("profile")
                 except ValidationError as e:
                     logger.error(f"Validation error in profile update: {e}")
-                    messages.error(request, f"Ошибка валидации: {', '.join(e.messages)}")
+                    messages.error(
+                        request, f"Ошибка валидации: {', '.join(e.messages)}"
+                    )
                 except Exception as e:
                     logger.error(f"Error updating profile: {str(e)}", exc_info=True)
-                    messages.error(request, "Произошла ошибка при обновлении профиля. Пожалуйста, попробуйте еще раз.")
+                    messages.error(
+                        request,
+                        "Произошла ошибка при обновлении профиля. Пожалуйста, попробуйте еще раз.",
+                    )
             else:
-                # Форма невалидна, показываем ошибки
                 messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
         elif "change_password" in request.POST:
             profile_form = ProfileForm(instance=request.user)
@@ -151,17 +155,21 @@ def profile_view(request):
             if password_form.is_valid():
                 try:
                     user = password_form.save()
-                    update_session_auth_hash(request, user)  # Важно! Обновляет сессию после смены пароля
+                    update_session_auth_hash(request, user)
                     messages.success(request, "Пароль успешно изменен.")
                     return redirect("profile")
                 except ValidationError as e:
                     logger.error(f"Validation error in password change: {e}")
-                    messages.error(request, f"Ошибка валидации: {', '.join(e.messages)}")
+                    messages.error(
+                        request, f"Ошибка валидации: {', '.join(e.messages)}"
+                    )
                 except Exception as e:
                     logger.error(f"Error changing password: {str(e)}", exc_info=True)
-                    messages.error(request, "Произошла ошибка при смене пароля. Пожалуйста, попробуйте еще раз.")
+                    messages.error(
+                        request,
+                        "Произошла ошибка при смене пароля. Пожалуйста, попробуйте еще раз.",
+                    )
             else:
-                # Форма невалидна, показываем ошибки
                 messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
         else:
             profile_form = ProfileForm(instance=request.user)
@@ -191,7 +199,7 @@ def create_application(request, psychologist_id=None):
             "Психологи не могут подавать заявки. Используйте панель управления для работы с заявками.",
         )
         return redirect("index")
-    
+
     if request.method == "POST":
         form = ApplicationForm(request.POST)
         if form.is_valid():
@@ -211,17 +219,17 @@ def create_application(request, psychologist_id=None):
                 User, id=psychologist_id, role="psychologist"
             )
             form.fields["psychologist"].initial = psychologist
-    
+
     breadcrumbs = get_breadcrumbs([{"title": "Подать заявку", "url": ""}])
-    return render(request, "application_create.html", {"form": form, "breadcrumbs": breadcrumbs})
+    return render(
+        request, "application_create.html", {"form": form, "breadcrumbs": breadcrumbs}
+    )
 
 
 @login_required
 def my_applications(request):
     """Список заявок текущего пользователя"""
-    applications = Application.objects.filter(user=request.user).order_by(
-        "-created_at"
-    )
+    applications = Application.objects.filter(user=request.user).order_by("-created_at")
     breadcrumbs = get_breadcrumbs([{"title": "Мои заявки", "url": ""}])
     return render(
         request,
@@ -248,16 +256,16 @@ def dashboard_student(request):
         return redirect("dashboard_admin")
     if request.user.is_psychologist():
         return redirect("dashboard_psychologist")
-    
+
     applications = Application.objects.filter(user=request.user)
-    
+
     status_filter = request.GET.get("status")
     if status_filter:
         applications = applications.filter(status=status_filter)
-    
+
     applications = applications.order_by("-created_at")
     meetings = Meeting.objects.filter(student=request.user).order_by("date", "time")
-    
+
     breadcrumbs = get_breadcrumbs([{"title": "Панель управления", "url": ""}])
     return render(
         request,
@@ -276,7 +284,7 @@ def dashboard_admin(request):
     """Панель управления для администраторов"""
     if not request.user.is_admin_user():
         return redirect("index")
-    
+
     if request.method == "POST" and "change_role" in request.POST:
         user_id = request.POST.get("user_id")
         new_role = request.POST.get("role")
@@ -284,28 +292,33 @@ def dashboard_admin(request):
             user = get_object_or_404(User, id=user_id)
             user.role = new_role
             user.save()
-            messages.success(request, f"Роль пользователя {user.get_display_name()} изменена на {user.get_role_display()}")
+            messages.success(
+                request,
+                f"Роль пользователя {user.get_display_name()} изменена на {user.get_role_display()}",
+            )
             return redirect("dashboard_admin")
-    
+
     users = User.objects.all()
     user_role_filter = request.GET.get("user_role")
     if user_role_filter:
         users = users.filter(role=user_role_filter)
     users = users.order_by("-created_at")
-    
+
     feedback_forms = FeedbackForm.objects.all()
     feedback_status_filter = request.GET.get("feedback_status")
     if feedback_status_filter:
         feedback_forms = feedback_forms.filter(status=feedback_status_filter)
     feedback_forms = feedback_forms.order_by("-created_at")
-    
+
     meetings = Meeting.objects.all()
     meeting_date_filter = request.GET.get("meeting_date")
     if meeting_date_filter:
         meetings = meetings.filter(date=meeting_date_filter)
     meetings = meetings.order_by("date", "time")
-    
-    breadcrumbs = get_breadcrumbs([{"title": "Панель управления администратора", "url": ""}])
+
+    breadcrumbs = get_breadcrumbs(
+        [{"title": "Панель управления администратора", "url": ""}]
+    )
     return render(
         request,
         "dashboard_admin.html",
@@ -326,22 +339,23 @@ def dashboard_psychologist(request):
     """Панель управления для психологов"""
     if not request.user.is_psychologist():
         return redirect("index")
-    
+
     applications = Application.objects.filter(psychologist=request.user)
-    
+
     status_filter = request.GET.get("status")
     if status_filter:
         applications = applications.filter(status=status_filter)
-    
+
     applications = applications.order_by("-created_at")
-    
+
     general_applications = Application.objects.filter(
-        psychologist__isnull=True,
-        status="pending"
+        psychologist__isnull=True, status="pending"
     ).order_by("-created_at")
-    
-    meetings = Meeting.objects.filter(psychologist=request.user).order_by("date", "time")
-    
+
+    meetings = Meeting.objects.filter(psychologist=request.user).order_by(
+        "date", "time"
+    )
+
     breadcrumbs = get_breadcrumbs([{"title": "Панель управления психолога", "url": ""}])
     return render(
         request,
@@ -361,13 +375,13 @@ def application_detail_psychologist(request, application_id):
     """Детальный просмотр заявки для психолога"""
     if not request.user.is_psychologist():
         return redirect("index")
-    
+
     application = get_object_or_404(Application, id=application_id)
-    
+
     if application.psychologist and application.psychologist != request.user:
         messages.error(request, "У вас нет доступа к этой заявке.")
         return redirect("dashboard_psychologist")
-    
+
     if request.method == "POST":
         if "take_application" in request.POST:
             if not application.psychologist:
@@ -375,13 +389,18 @@ def application_detail_psychologist(request, application_id):
                 application.status = "in_progress"
                 application.save()
                 messages.success(request, "Заявка успешно взята в работу.")
-                return redirect("application_detail_psychologist", application_id=application.id)
+                return redirect(
+                    "application_detail_psychologist", application_id=application.id
+                )
         elif "add_consultation" in request.POST:
             if application.status == "completed":
-                messages.error(request, "Нельзя отправлять ответы для завершенной заявки.")
-                return redirect("application_detail_psychologist", application_id=application.id)
+                messages.error(
+                    request, "Нельзя отправлять ответы для завершенной заявки."
+                )
+                return redirect(
+                    "application_detail_psychologist", application_id=application.id
+                )
             consultation_form = ConsultationForm(request.POST)
-            meeting_form = MeetingForm(psychologist=request.user)
             if consultation_form.is_valid():
                 consultation = consultation_form.save(commit=False)
                 consultation.application = application
@@ -392,13 +411,18 @@ def application_detail_psychologist(request, application_id):
                     application.psychologist = request.user
                     application.save()
                 messages.success(request, "Ответ успешно отправлен студенту.")
-                return redirect("application_detail_psychologist", application_id=application.id)
+                return redirect(
+                    "application_detail_psychologist", application_id=application.id
+                )
         elif "add_meeting" in request.POST:
             if application.status == "completed":
-                messages.error(request, "Нельзя назначать встречи для завершенной заявки.")
-                return redirect("application_detail_psychologist", application_id=application.id)
+                messages.error(
+                    request, "Нельзя назначать встречи для завершенной заявки."
+                )
+                return redirect(
+                    "application_detail_psychologist", application_id=application.id
+                )
             meeting_form = MeetingForm(request.POST, psychologist=request.user)
-            consultation_form = ConsultationForm()
             if meeting_form.is_valid():
                 meeting = meeting_form.save(commit=False)
                 meeting.student = application.user
@@ -406,16 +430,17 @@ def application_detail_psychologist(request, application_id):
                 meeting.application = application
                 meeting.save()
                 messages.success(request, "Встреча успешно назначена.")
-                return redirect("application_detail_psychologist", application_id=application.id)
+                return redirect(
+                    "application_detail_psychologist", application_id=application.id
+                )
             else:
-
-                errors_attr = getattr(meeting_form, 'non_field_errors', None)
+                errors_attr = getattr(meeting_form, "non_field_errors", None)
                 if errors_attr is not None:
                     if callable(errors_attr):
                         errors = errors_attr()
                     else:
                         errors = errors_attr
-                    
+
                     if errors:
                         for error in errors:
                             messages.error(request, str(error))
@@ -428,20 +453,21 @@ def application_detail_psychologist(request, application_id):
                 application.status = "completed"
                 application.save()
                 messages.success(request, "Заявка успешно завершена.")
-                return redirect("application_detail_psychologist", application_id=application.id)
-        else:
-            consultation_form = ConsultationForm()
-            meeting_form = MeetingForm(psychologist=request.user)
+                return redirect(
+                    "application_detail_psychologist", application_id=application.id
+                )
     else:
         consultation_form = ConsultationForm()
         meeting_form = MeetingForm(psychologist=request.user)
-    
+
     consultations = application.consultations.all().order_by("-created_at")
-    
-    breadcrumbs = get_breadcrumbs([
-        {"title": "Панель управления", "url": reverse("dashboard_psychologist")},
-        {"title": f"Заявка #{application.id}", "url": ""},
-    ])
+
+    breadcrumbs = get_breadcrumbs(
+        [
+            {"title": "Панель управления", "url": reverse("dashboard_psychologist")},
+            {"title": f"Заявка #{application.id}", "url": ""},
+        ]
+    )
     return render(
         request,
         "application_detail_psychologist.html",
@@ -460,44 +486,27 @@ def application_detail_student(request, application_id):
     """Детальный просмотр заявки для студента"""
     if request.user.is_psychologist() or request.user.is_admin_user():
         return redirect("index")
-    
+
     application = get_object_or_404(Application, id=application_id)
-    
+
     if application.user != request.user:
         messages.error(request, "У вас нет доступа к этой заявке.")
         return redirect("dashboard")
-    
-    if request.method == "POST":
-        if "add_message" in request.POST:
-            if application.status == "completed":
-                messages.error(request, "Нельзя отправлять сообщения для завершенной заявки.")
-                return redirect("application_detail_student", application_id=application.id)
-            consultation_form = ConsultationForm(request.POST)
-            if consultation_form.is_valid():
-                consultation = consultation_form.save(commit=False)
-                consultation.application = application
-                consultation.student = request.user
-                consultation.save()
-                messages.success(request, "Сообщение успешно отправлено.")
-                return redirect("application_detail_student", application_id=application.id)
-        else:
-            consultation_form = ConsultationForm()
-    else:
-        consultation_form = ConsultationForm()
-    
+
     consultations = application.consultations.all().order_by("-created_at")
-    
-    breadcrumbs = get_breadcrumbs([
-        {"title": "Панель управления", "url": reverse("dashboard")},
-        {"title": f"Заявка #{application.id}", "url": ""},
-    ])
+
+    breadcrumbs = get_breadcrumbs(
+        [
+            {"title": "Панель управления", "url": reverse("dashboard")},
+            {"title": f"Заявка #{application.id}", "url": ""},
+        ]
+    )
     return render(
         request,
         "application_detail_student.html",
         {
             "application": application,
             "consultations": consultations,
-            "consultation_form": consultation_form,
             "breadcrumbs": breadcrumbs,
         },
     )
@@ -508,9 +517,9 @@ def feedback_detail_admin(request, feedback_id):
     """Детальный просмотр формы обратной связи для администратора"""
     if not request.user.is_admin_user():
         return redirect("index")
-    
+
     feedback = get_object_or_404(FeedbackForm, id=feedback_id)
-    
+
     if request.method == "POST" and "change_status" in request.POST:
         new_status = request.POST.get("status")
         if new_status:
@@ -518,11 +527,13 @@ def feedback_detail_admin(request, feedback_id):
             feedback.save()
             messages.success(request, "Статус формы обратной связи обновлен.")
             return redirect("feedback_detail_admin", feedback_id=feedback.id)
-    
-    breadcrumbs = get_breadcrumbs([
-        {"title": "Панель управления", "url": reverse("dashboard_admin")},
-        {"title": f"Форма обратной связи #{feedback.id}", "url": ""},
-    ])
+
+    breadcrumbs = get_breadcrumbs(
+        [
+            {"title": "Панель управления", "url": reverse("dashboard_admin")},
+            {"title": f"Форма обратной связи #{feedback.id}", "url": ""},
+        ]
+    )
     return render(
         request,
         "feedback_detail_admin.html",
@@ -539,36 +550,37 @@ def delete_user(request, user_id):
     if not request.user.is_admin_user():
         messages.error(request, "У вас нет прав для выполнения этого действия.")
         return redirect("index")
-    
+
     user_to_delete = get_object_or_404(User, id=user_id)
-    
-    # Проверка: администратор не может удалить сам себя
+
     if user_to_delete.id == request.user.id:
         messages.error(request, "Вы не можете удалить свой собственный аккаунт.")
         return redirect("dashboard_admin")
-    
-    # Проверка: нельзя удалить последнего администратора
+
     admin_count = User.objects.filter(role="admin").count()
     if user_to_delete.role == "admin" and admin_count <= 1:
         messages.error(request, "Нельзя удалить последнего администратора.")
         return redirect("dashboard_admin")
-    
+
     if request.method == "POST":
         try:
             user_display_name = user_to_delete.get_display_name()
             user_to_delete.delete()
-            messages.success(request, f"Пользователь {user_display_name} успешно удален.")
+            messages.success(
+                request, f"Пользователь {user_display_name} успешно удален."
+            )
             return redirect("dashboard_admin")
         except Exception as e:
             logger.error(f"Error deleting user: {str(e)}", exc_info=True)
             messages.error(request, "Произошла ошибка при удалении пользователя.")
             return redirect("dashboard_admin")
-    
-    # GET запрос - показываем страницу подтверждения
-    breadcrumbs = get_breadcrumbs([
-        {"title": "Панель управления", "url": reverse("dashboard_admin")},
-        {"title": "Удаление пользователя", "url": ""},
-    ])
+
+    breadcrumbs = get_breadcrumbs(
+        [
+            {"title": "Панель управления", "url": reverse("dashboard_admin")},
+            {"title": "Удаление пользователя", "url": ""},
+        ]
+    )
     return render(
         request,
         "delete_user_confirm.html",
@@ -584,22 +596,26 @@ def export_meetings_excel(request):
     """Экспорт встреч в Excel файл для администраторов"""
     if not request.user.is_admin_user():
         return redirect("index")
-    
-    meetings = Meeting.objects.all().select_related("student", "psychologist", "application")
-    
+
+    meetings = Meeting.objects.all().select_related(
+        "student", "psychologist", "application"
+    )
+
     meeting_date_filter = request.GET.get("meeting_date")
     if meeting_date_filter:
         meetings = meetings.filter(date=meeting_date_filter)
-    
+
     meetings = meetings.order_by("date", "time")
-    
+
     wb = Workbook()
     ws = wb.active
     ws.title = "Встречи"
-    
-    header_fill = PatternFill(start_color="667eea", end_color="667eea", fill_type="solid")
+
+    header_fill = PatternFill(
+        start_color="667eea", end_color="667eea", fill_type="solid"
+    )
     header_font = Font(bold=True, color="FFFFFF", size=12)
-    
+
     headers = [
         "ID",
         "Студент",
@@ -611,18 +627,18 @@ def export_meetings_excel(request):
         "ID заявки",
         "Дата создания",
     ]
-    
+
     for col_num, header in enumerate(headers, 1):
         cell = ws.cell(row=1, column=col_num)
         cell.value = header
         cell.font = header_font
         cell.fill = header_fill
         cell.alignment = Alignment(horizontal="center", vertical="center")
-    
+
     for row_num, meeting in enumerate(meetings, 2):
         psychologist_name = meeting.psychologist.get_display_name()
         student_name = meeting.student.get_display_name()
-        
+
         ws.cell(row=row_num, column=1, value=meeting.id)
         ws.cell(row=row_num, column=2, value=student_name)
         ws.cell(row=row_num, column=3, value=meeting.student.email)
@@ -630,9 +646,15 @@ def export_meetings_excel(request):
         ws.cell(row=row_num, column=5, value=meeting.psychologist.email)
         ws.cell(row=row_num, column=6, value=meeting.date.strftime("%d.%m.%Y"))
         ws.cell(row=row_num, column=7, value=meeting.time.strftime("%H:%M"))
-        ws.cell(row=row_num, column=8, value=meeting.application.id if meeting.application else "")
-        ws.cell(row=row_num, column=9, value=meeting.created_at.strftime("%d.%m.%Y %H:%M"))
-    
+        ws.cell(
+            row=row_num,
+            column=8,
+            value=meeting.application.id if meeting.application else "",
+        )
+        ws.cell(
+            row=row_num, column=9, value=meeting.created_at.strftime("%d.%m.%Y %H:%M")
+        )
+
     for col in ws.columns:
         max_length = 0
         column = col[0].column_letter
@@ -644,12 +666,113 @@ def export_meetings_excel(request):
                 pass
         adjusted_width = min(max_length + 2, 50)
         ws.column_dimensions[column].width = adjusted_width
-    
+
     response = HttpResponse(
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
     filename = f"meetings_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
     response["Content-Disposition"] = f'attachment; filename="{filename}"'
-    
+
     wb.save(response)
     return response
+
+
+@login_required
+def edit_meeting(request, meeting_id):
+    """Редактирование встречи психологом"""
+    if not request.user.is_psychologist():
+        messages.error(request, "У вас нет прав для выполнения этого действия.")
+        return redirect("index")
+
+    meeting = get_object_or_404(Meeting, id=meeting_id)
+
+    if meeting.psychologist != request.user:
+        messages.error(request, "У вас нет доступа к этой встрече.")
+        return redirect("dashboard_psychologist")
+
+    if request.method == "POST":
+        meeting_form = MeetingForm(
+            request.POST, psychologist=request.user, instance=meeting
+        )
+        if meeting_form.is_valid():
+            meeting_form.save()
+            messages.success(request, "Встреча успешно обновлена.")
+            return redirect("dashboard_psychologist")
+        else:
+            errors_attr = getattr(meeting_form, "non_field_errors", None)
+            if errors_attr is not None:
+                if callable(errors_attr):
+                    errors = errors_attr()
+                else:
+                    errors = errors_attr
+
+                if errors:
+                    for error in errors:
+                        messages.error(request, str(error))
+                else:
+                    messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
+            else:
+                messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
+    else:
+        meeting_form = MeetingForm(psychologist=request.user, instance=meeting)
+
+    breadcrumbs = get_breadcrumbs(
+        [
+            {"title": "Панель управления", "url": reverse("dashboard_psychologist")},
+            {"title": "Редактирование встречи", "url": ""},
+        ]
+    )
+    return render(
+        request,
+        "edit_meeting.html",
+        {
+            "meeting": meeting,
+            "meeting_form": meeting_form,
+            "breadcrumbs": breadcrumbs,
+        },
+    )
+
+
+@login_required
+def delete_meeting(request, meeting_id):
+    """Удаление встречи психологом"""
+    if not request.user.is_psychologist():
+        messages.error(request, "У вас нет прав для выполнения этого действия.")
+        return redirect("index")
+
+    meeting = get_object_or_404(Meeting, id=meeting_id)
+
+    if meeting.psychologist != request.user:
+        messages.error(request, "У вас нет доступа к этой встрече.")
+        return redirect("dashboard_psychologist")
+
+    if request.method == "POST":
+        try:
+            student_name = meeting.student.get_display_name()
+            meeting_date = meeting.date.strftime("%d.%m.%Y")
+            meeting_time = meeting.time.strftime("%H:%M")
+            meeting.delete()
+            messages.success(
+                request,
+                f"Встреча со студентом {student_name} на {meeting_date} в {meeting_time} успешно удалена.",
+            )
+            return redirect("dashboard_psychologist")
+        except Exception as e:
+            logger.error(f"Error deleting meeting: {str(e)}", exc_info=True)
+            messages.error(request, "Произошла ошибка при удалении встречи.")
+            return redirect("dashboard_psychologist")
+
+    breadcrumbs = get_breadcrumbs(
+        [
+            {"title": "Панель управления", "url": reverse("dashboard_psychologist")},
+            {"title": "Удаление встречи", "url": ""},
+        ]
+    )
+    return render(
+        request,
+        "delete_meeting_confirm.html",
+        {
+            "meeting": meeting,
+            "breadcrumbs": breadcrumbs,
+        },
+    )
