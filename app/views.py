@@ -467,6 +467,24 @@ def application_detail_student(request, application_id):
         messages.error(request, "У вас нет доступа к этой заявке.")
         return redirect("dashboard")
     
+    if request.method == "POST":
+        if "add_message" in request.POST:
+            if application.status == "completed":
+                messages.error(request, "Нельзя отправлять сообщения для завершенной заявки.")
+                return redirect("application_detail_student", application_id=application.id)
+            consultation_form = ConsultationForm(request.POST)
+            if consultation_form.is_valid():
+                consultation = consultation_form.save(commit=False)
+                consultation.application = application
+                consultation.student = request.user
+                consultation.save()
+                messages.success(request, "Сообщение успешно отправлено.")
+                return redirect("application_detail_student", application_id=application.id)
+        else:
+            consultation_form = ConsultationForm()
+    else:
+        consultation_form = ConsultationForm()
+    
     consultations = application.consultations.all().order_by("-created_at")
     
     breadcrumbs = get_breadcrumbs([
@@ -479,6 +497,7 @@ def application_detail_student(request, application_id):
         {
             "application": application,
             "consultations": consultations,
+            "consultation_form": consultation_form,
             "breadcrumbs": breadcrumbs,
         },
     )

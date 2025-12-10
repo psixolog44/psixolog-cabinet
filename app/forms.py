@@ -225,7 +225,7 @@ class ApplicationForm(forms.ModelForm):
 
 
 class ConsultationForm(forms.ModelForm):
-    """Форма для ответа психолога на заявку"""
+    """Форма для сообщения между психологом и студентом"""
 
     class Meta:
         model = Consultation
@@ -234,14 +234,20 @@ class ConsultationForm(forms.ModelForm):
             "message": forms.Textarea(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Введите ваш ответ студенту",
+                    "placeholder": "Введите ваше сообщение",
                     "rows": 6,
                 }
             ),
         }
         labels = {
-            "message": "Ответ",
+            "message": "Сообщение",
         }
+    
+    def clean(self):
+        """Валидация формы"""
+        cleaned_data = super().clean()
+        # Валидация будет выполнена в view, где устанавливается psychologist или student
+        return cleaned_data
 
 
 class MeetingForm(forms.ModelForm):

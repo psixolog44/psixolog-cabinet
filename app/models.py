@@ -87,7 +87,7 @@ class Application(models.Model):
 
 
 class Consultation(models.Model):
-    """Модель консультации/ответа психолога на заявку"""
+    """Модель консультации/сообщения между психологом и студентом"""
 
     application = models.ForeignKey(
         Application,
@@ -100,7 +100,18 @@ class Consultation(models.Model):
         on_delete=models.CASCADE,
         related_name="consultations",
         limit_choices_to={"role": "psychologist"},
+        null=True,
+        blank=True,
         verbose_name="Психолог",
+    )
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="student_consultations",
+        limit_choices_to={"role": "user"},
+        null=True,
+        blank=True,
+        verbose_name="Студент",
     )
     message = models.TextField(verbose_name="Сообщение")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
@@ -111,7 +122,16 @@ class Consultation(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"Консультация по заявке {self.application.id}"
+        sender = self.psychologist if self.psychologist else self.student
+        return f"Сообщение от {sender.username} по заявке {self.application.id}"
+    
+    def get_sender(self):
+        """Возвращает отправителя сообщения"""
+        return self.psychologist if self.psychologist else self.student
+    
+    def is_from_psychologist(self):
+        """Проверяет, отправлено ли сообщение психологом"""
+        return self.psychologist is not None
 
 
 class FeedbackForm(models.Model):

@@ -130,9 +130,15 @@
             <div class="consultations-section">
                 <h3>История сообщений</h3>
                 {% for consultation in consultations %}
-                    <div class="consultation-card">
+                    <div class="consultation-card {% if consultation.is_from_psychologist %}consultation-from-psychologist{% else %}consultation-from-student{% endif %}">
                         <div class="consultation-card-header">
-                            <strong>{{ consultation.psychologist.get_display_name }}</strong>
+                            <strong>
+                                {% if consultation.is_from_psychologist %}
+                                    {{ consultation.psychologist.get_display_name }} (Вы)
+                                {% else %}
+                                    {{ consultation.student.get_display_name }} (Студент)
+                                {% endif %}
+                            </strong>
                             <span class="consultation-date">
                                 {{ consultation.created_at|date:"d.m.Y H:i" }}
                             </span>

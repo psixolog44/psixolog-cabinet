@@ -46,13 +46,39 @@
             </div>
         </div>
         
+        {% if application.status != "completed" %}
+            <div class="consultation-form-section">
+                <h3>Отправить сообщение</h3>
+                <form method="post" class="consultation-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="add_message" value="1">
+                    <div class="form-group">
+                        <label for="{{ consultation_form.message.id_for_label }}">
+                            {{ consultation_form.message.label }}
+                        </label>
+                        {{ consultation_form.message }}
+                        {% if consultation_form.message.errors %}
+                            <div class="form-error">{{ consultation_form.message.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-submit-margin">Отправить сообщение</button>
+                </form>
+            </div>
+        {% endif %}
+        
         {% if consultations %}
             <div class="consultations-section">
-                <h3>Ответы психолога</h3>
+                <h3>История сообщений</h3>
                 {% for consultation in consultations %}
-                    <div class="consultation-card">
+                    <div class="consultation-card {% if consultation.is_from_psychologist %}consultation-from-psychologist{% else %}consultation-from-student{% endif %}">
                         <div class="consultation-card-header">
-                            <strong>{{ consultation.psychologist.get_display_name }}</strong>
+                            <strong>
+                                {% if consultation.is_from_psychologist %}
+                                    {{ consultation.psychologist.get_display_name }} (Психолог)
+                                {% else %}
+                                    {{ consultation.student.get_display_name }} (Вы)
+                                {% endif %}
+                            </strong>
                             <span class="consultation-date">
                                 {{ consultation.created_at|date:"d.m.Y H:i" }}
                             </span>
@@ -63,7 +89,7 @@
             </div>
         {% else %}
             <div class="consultations-section">
-                <p>Пока нет ответов от психолога.</p>
+                <p>Пока нет сообщений. Начните общение, отправив первое сообщение.</p>
             </div>
         {% endif %}
     </div>
