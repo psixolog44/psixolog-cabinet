@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
 from datetime import datetime, timedelta
-from .models import FeedbackForm, User, Application, Consultation, Meeting
+from .models import FeedbackForm, User, Application, Consultation, Meeting, Report
 
 
 class FeedbackFormForm(forms.ModelForm):
@@ -322,3 +322,23 @@ class MeetingForm(forms.ModelForm):
                 )
 
         return cleaned_data
+
+
+class ReportForm(forms.ModelForm):
+    """Форма для создания отчета о работе над заявкой"""
+
+    class Meta:
+        model = Report
+        fields = ["report_text"]
+        widgets = {
+            "report_text": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Опишите проделанную работу, результаты консультаций, встреч и общий итог работы со студентом",
+                    "rows": 10,
+                }
+            ),
+        }
+        labels = {
+            "report_text": "Текст отчета",
+        }

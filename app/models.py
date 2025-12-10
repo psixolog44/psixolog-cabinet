@@ -199,3 +199,46 @@ class Meeting(models.Model):
     
     def __str__(self):
         return f"Встреча {self.student.username} с {self.psychologist.username} - {self.date} {self.time}"
+
+
+class Report(models.Model):
+    """Модель отчета психолога о работе над заявкой"""
+    
+    application = models.ForeignKey(
+        Application,
+        on_delete=models.CASCADE,
+        related_name="reports",
+        verbose_name="Заявка",
+    )
+    psychologist = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="reports",
+        limit_choices_to={"role": "psychologist"},
+        verbose_name="Психолог",
+    )
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="student_reports",
+        limit_choices_to={"role": "user"},
+        verbose_name="Студент",
+    )
+    report_text = models.TextField(verbose_name="Текст отчета")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    
+    class Meta:
+        verbose_name = "Отчет"
+        verbose_name_plural = "Отчеты"
+        ordering = ["-created_at"]
+    
+    def __str__(self):
+        return f"Отчет по заявке #{self.application.id} - {self.student.get_display_name()}"
+    
+    def get_meetings(self):
+        """Возвращает все встречи, связанные с заявкой этого отчета"""
+        return Meeting.objects.filter(
+            application=self.application,
+            psychologist=self.psychologist,
+            student=self.student
+        ).order_by("date", "time")

@@ -128,6 +128,52 @@
                 <p class="no-meetings">У вас пока нет назначенных встреч.</p>
             {% endif %}
         </div>
+        
+        <div class="reports-section">
+            <h3 class="dashboard-section-title">Отчеты о работе</h3>
+            {% if reports %}
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Студент</th>
+                            <th>Психолог</th>
+                            <th>Заявка</th>
+                            <th>Встречи</th>
+                            <th>Дата создания</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                            <tr>
+                                <td>{{ report.student.get_display_name }}</td>
+                                <td>{{ report.psychologist.get_display_name }}</td>
+                                <td>#{{ report.application.id }} - {{ report.application.title }}</td>
+                                <td>
+                                    {% with meetings=report.get_meetings %}
+                                        {% if meetings %}
+                                            {% for meeting in meetings %}
+                                                <div>{{ meeting.date|date:"d.m.Y" }} {{ meeting.time|date:"H:i" }}</div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="text-muted">Нет встреч</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                                <td>{{ report.created_at|date:"d.m.Y H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'application_detail_psychologist' report.application.id %}" class="btn btn-primary btn-sm">
+                                        Просмотр
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-reports">У вас пока нет отчетов.</p>
+            {% endif %}
+        </div>
     </div>
 </section>
 {% endblock %}

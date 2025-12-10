@@ -6,7 +6,11 @@
 <section class="feedback-form-section application-detail-section">
     <div class="section-content application-detail-content">
         <div class="back-button-container">
-            <a href="{% url 'dashboard_psychologist' %}" class="btn btn-secondary">← Назад к списку заявок</a>
+            {% if user.is_admin_user %}
+                <a href="{% url 'dashboard_admin' %}" class="btn btn-secondary">← Назад к панели управления</a>
+            {% else %}
+                <a href="{% url 'dashboard_psychologist' %}" class="btn btn-secondary">← Назад к списку заявок</a>
+            {% endif %}
         </div>
         
         <h2>Детали заявки</h2>
@@ -61,12 +65,46 @@
                 </form>
             </div>
         {% elif application.psychologist == user and application.status != "completed" %}
-            <div class="complete-application-section">
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="complete_application" value="1">
-                    <button type="submit" class="btn btn-success">Завершить работу над заявкой</button>
-                </form>
+            {% if not existing_report %}
+                <div class="report-section">
+                    <h3>Завершить работу над заявкой</h3>
+                    <p>Для завершения работы над заявкой необходимо заполнить отчет о проделанной работе.</p>
+                    <form method="post" class="report-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="complete_application" value="1">
+                        {% if report_form.non_field_errors %}
+                            <div class="form-error" style="margin-bottom: 1rem; padding: 1rem; background-color: #fee; border: 1px solid #fcc; border-radius: 4px; color: #c33;">
+                                {% for error in report_form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-group">
+                            <label for="{{ report_form.report_text.id_for_label }}">
+                                {{ report_form.report_text.label }}
+                            </label>
+                            {{ report_form.report_text }}
+                            {% if report_form.report_text.errors %}
+                                <div class="form-error">{{ report_form.report_text.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-success btn-submit-margin">Завершить работу и сохранить отчет</button>
+                    </form>
+                </div>
+            {% endif %}
+        {% endif %}
+        
+        {% if existing_report %}
+            <div class="report-display-section">
+                <h3>Отчет о работе</h3>
+                <div class="report-info-box">
+                    <div class="application-info-item">
+                        <strong>Дата создания отчета:</strong> {{ existing_report.created_at|date:"d.m.Y H:i" }}
+                    </div>
+                </div>
+                <div class="report-text-box">
+                    <p class="report-text">{{ existing_report.report_text|linebreaks }}</p>
+                </div>
             </div>
         {% endif %}
         

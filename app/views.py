@@ -20,8 +20,9 @@ from .forms import (
     ApplicationForm,
     ConsultationForm,
     MeetingForm,
+    ReportForm,
 )
-from .models import User, Application, FeedbackForm, Meeting
+from .models import User, Application, FeedbackForm, Meeting, Report
 
 
 def get_breadcrumbs(items):
@@ -316,6 +317,8 @@ def dashboard_admin(request):
         meetings = meetings.filter(date=meeting_date_filter)
     meetings = meetings.order_by("date", "time")
 
+    reports = Report.objects.all().order_by("-created_at")
+
     breadcrumbs = get_breadcrumbs(
         [{"title": "Панель управления администратора", "url": ""}]
     )
@@ -326,6 +329,7 @@ def dashboard_admin(request):
             "users": users,
             "feedback_forms": feedback_forms,
             "meetings": meetings,
+            "reports": reports,
             "current_user_role": user_role_filter,
             "current_feedback_status": feedback_status_filter,
             "current_meeting_date": meeting_date_filter,
@@ -356,6 +360,8 @@ def dashboard_psychologist(request):
         "date", "time"
     )
 
+    reports = Report.objects.filter(psychologist=request.user).order_by("-created_at")
+
     breadcrumbs = get_breadcrumbs([{"title": "Панель управления психолога", "url": ""}])
     return render(
         request,
@@ -364,6 +370,7 @@ def dashboard_psychologist(request):
             "applications": applications,
             "general_applications": general_applications,
             "meetings": meetings,
+            "reports": reports,
             "current_status": status_filter,
             "breadcrumbs": breadcrumbs,
         },
@@ -372,15 +379,17 @@ def dashboard_psychologist(request):
 
 @login_required
 def application_detail_psychologist(request, application_id):
-    """Детальный просмотр заявки для психолога"""
-    if not request.user.is_psychologist():
+    """Детальный просмотр заявки для психолога и администратора"""
+    if not request.user.is_psychologist() and not request.user.is_admin_user():
         return redirect("index")
 
     application = get_object_or_404(Application, id=application_id)
 
-    if application.psychologist and application.psychologist != request.user:
-        messages.error(request, "У вас нет доступа к этой заявке.")
-        return redirect("dashboard_psychologist")
+    # Администраторы могут видеть все заявки, психологи - только свои
+    if not request.user.is_admin_user():
+        if application.psychologist and application.psychologist != request.user:
+            messages.error(request, "У вас нет доступа к этой заявке.")
+            return redirect("dashboard_psychologist")
 
     if request.method == "POST":
         if "take_application" in request.POST:
@@ -450,24 +459,56 @@ def application_detail_psychologist(request, application_id):
                     messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
         elif "complete_application" in request.POST:
             if application.psychologist == request.user:
-                application.status = "completed"
-                application.save()
-                messages.success(request, "Заявка успешно завершена.")
-                return redirect(
-                    "application_detail_psychologist", application_id=application.id
-                )
+                report_form = ReportForm(request.POST)
+                if report_form.is_valid():
+                    report = report_form.save(commit=False)
+                    report.application = application
+                    report.psychologist = request.user
+                    report.student = application.user
+                    report.save()
+                    application.status = "completed"
+                    application.save()
+                    messages.success(request, "Заявка успешно завершена и отчет добавлен.")
+                    return redirect(
+                        "application_detail_psychologist", application_id=application.id
+                    )
+                else:
+                    messages.error(request, "Пожалуйста, заполните отчет корректно.")
+                    consultation_form = ConsultationForm()
+                    meeting_form = MeetingForm(psychologist=request.user)
+                    # report_form уже определен выше, не нужно переопределять
+            else:
+                consultation_form = ConsultationForm()
+                meeting_form = MeetingForm(psychologist=request.user)
+                report_form = ReportForm()
+        else:
+            consultation_form = ConsultationForm()
+            meeting_form = MeetingForm(psychologist=request.user)
+            report_form = ReportForm()
     else:
         consultation_form = ConsultationForm()
         meeting_form = MeetingForm(psychologist=request.user)
+        report_form = ReportForm()
 
     consultations = application.consultations.all().order_by("-created_at")
 
+    # Определяем правильный URL для breadcrumbs в зависимости от роли
+    if request.user.is_admin_user():
+        dashboard_url = reverse("dashboard_admin")
+        dashboard_title = "Панель управления администратора"
+    else:
+        dashboard_url = reverse("dashboard_psychologist")
+        dashboard_title = "Панель управления"
+    
     breadcrumbs = get_breadcrumbs(
         [
-            {"title": "Панель управления", "url": reverse("dashboard_psychologist")},
+            {"title": dashboard_title, "url": dashboard_url},
             {"title": f"Заявка #{application.id}", "url": ""},
         ]
     )
+    # Проверяем, есть ли уже отчет для этой заявки
+    existing_report = Report.objects.filter(application=application).first()
+    
     return render(
         request,
         "application_detail_psychologist.html",
@@ -476,6 +517,8 @@ def application_detail_psychologist(request, application_id):
             "consultations": consultations,
             "consultation_form": consultation_form,
             "meeting_form": meeting_form,
+            "report_form": report_form,
+            "existing_report": existing_report,
             "breadcrumbs": breadcrumbs,
         },
     )
