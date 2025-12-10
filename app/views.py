@@ -22,7 +22,7 @@ from .forms import (
     MeetingForm,
     ReportForm,
 )
-from .models import User, Application, FeedbackForm, Meeting, Report
+from .models import User, Application, FeedbackForm, Meeting, Report, Notification
 
 
 def get_breadcrumbs(items):
@@ -30,6 +30,18 @@ def get_breadcrumbs(items):
     breadcrumbs = [{"title": "Главная", "url": reverse("index")}]
     breadcrumbs.extend(items)
     return breadcrumbs
+
+
+def create_notification(user, notification_type, title, message, application=None, meeting=None):
+    """Создание уведомления для пользователя"""
+    Notification.objects.create(
+        user=user,
+        notification_type=notification_type,
+        title=title,
+        message=message,
+        related_application=application,
+        related_meeting=meeting,
+    )
 
 
 def index(request):
@@ -208,6 +220,14 @@ def create_application(request, psychologist_id=None):
             application.user = request.user
             application.status = "pending"
             application.save()
+            if application.psychologist:
+                create_notification(
+                    user=application.psychologist,
+                    notification_type="application_assigned",
+                    title="Новая заявка",
+                    message=f"Студент {request.user.get_display_name()} подал(а) вам новую заявку: '{application.title}'",
+                    application=application,
+                )
             messages.success(
                 request,
                 "Заявка успешно отправлена! Психолог рассмотрит её в ближайшее время.",
@@ -397,6 +417,13 @@ def application_detail_psychologist(request, application_id):
                 application.psychologist = request.user
                 application.status = "in_progress"
                 application.save()
+                create_notification(
+                    user=request.user,
+                    notification_type="application_assigned",
+                    title="Заявка назначена",
+                    message=f"Вам назначена заявка #{application.id} '{application.title}' от студента {application.user.get_display_name()}",
+                    application=application,
+                )
                 messages.success(request, "Заявка успешно взята в работу.")
                 return redirect(
                     "application_detail_psychologist", application_id=application.id
@@ -419,10 +446,19 @@ def application_detail_psychologist(request, application_id):
                     application.status = "in_progress"
                     application.psychologist = request.user
                     application.save()
+                create_notification(
+                    user=application.user,
+                    notification_type="consultation_message",
+                    title=f"Новое сообщение от психолога",
+                    message=f"Психолог {request.user.get_display_name()} отправил(а) вам сообщение по заявке #{application.id}",
+                    application=application,
+                )
                 messages.success(request, "Ответ успешно отправлен студенту.")
                 return redirect(
                     "application_detail_psychologist", application_id=application.id
                 )
+            else:
+                messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
         elif "add_meeting" in request.POST:
             if application.status == "completed":
                 messages.error(
@@ -432,12 +468,22 @@ def application_detail_psychologist(request, application_id):
                     "application_detail_psychologist", application_id=application.id
                 )
             meeting_form = MeetingForm(request.POST, psychologist=request.user)
+            consultation_form = ConsultationForm()
+            report_form = ReportForm()
             if meeting_form.is_valid():
                 meeting = meeting_form.save(commit=False)
                 meeting.student = application.user
                 meeting.psychologist = request.user
                 meeting.application = application
                 meeting.save()
+                create_notification(
+                    user=application.user,
+                    notification_type="meeting_scheduled",
+                    title="Встреча назначена",
+                    message=f"Психолог {request.user.get_display_name()} назначил(а) вам встречу на {meeting.date.strftime('%d.%m.%Y')} в {meeting.time.strftime('%H:%M')}",
+                    application=application,
+                    meeting=meeting,
+                )
                 messages.success(request, "Встреча успешно назначена.")
                 return redirect(
                     "application_detail_psychologist", application_id=application.id
@@ -457,9 +503,13 @@ def application_detail_psychologist(request, application_id):
                         messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
                 else:
                     messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
+                consultation_form = ConsultationForm()
+                report_form = ReportForm()
         elif "complete_application" in request.POST:
             if application.psychologist == request.user:
                 report_form = ReportForm(request.POST)
+                consultation_form = ConsultationForm()
+                meeting_form = MeetingForm(psychologist=request.user)
                 if report_form.is_valid():
                     report = report_form.save(commit=False)
                     report.application = application
@@ -468,6 +518,13 @@ def application_detail_psychologist(request, application_id):
                     report.save()
                     application.status = "completed"
                     application.save()
+                    create_notification(
+                        user=application.user,
+                        notification_type="application_completed",
+                        title="Заявка завершена",
+                        message=f"Ваша заявка #{application.id} '{application.title}' была завершена психологом {request.user.get_display_name()}",
+                        application=application,
+                    )
                     messages.success(request, "Заявка успешно завершена и отчет добавлен.")
                     return redirect(
                         "application_detail_psychologist", application_id=application.id
@@ -536,6 +593,37 @@ def application_detail_student(request, application_id):
         messages.error(request, "У вас нет доступа к этой заявке.")
         return redirect("dashboard")
 
+    if request.method == "POST" and "add_message" in request.POST:
+        if application.status == "completed":
+            messages.error(
+                request, "Нельзя отправлять сообщения для завершенной заявки."
+            )
+            return redirect(
+                "application_detail_student", application_id=application.id
+            )
+        consultation_form = ConsultationForm(request.POST)
+        if consultation_form.is_valid():
+            consultation = consultation_form.save(commit=False)
+            consultation.application = application
+            consultation.student = request.user
+            consultation.save()
+            if application.psychologist:
+                create_notification(
+                    user=application.psychologist,
+                    notification_type="consultation_message",
+                    title=f"Новое сообщение от студента",
+                    message=f"Студент {request.user.get_display_name()} отправил(а) вам сообщение по заявке #{application.id}",
+                    application=application,
+                )
+            messages.success(request, "Сообщение успешно отправлено.")
+            return redirect(
+                "application_detail_student", application_id=application.id
+            )
+        else:
+            messages.error(request, "Пожалуйста, исправьте ошибки в форме.")
+    else:
+        consultation_form = ConsultationForm()
+
     consultations = application.consultations.all().order_by("-created_at")
 
     breadcrumbs = get_breadcrumbs(
@@ -550,6 +638,7 @@ def application_detail_student(request, application_id):
         {
             "application": application,
             "consultations": consultations,
+            "consultation_form": consultation_form,
             "breadcrumbs": breadcrumbs,
         },
     )
@@ -739,6 +828,14 @@ def edit_meeting(request, meeting_id):
         )
         if meeting_form.is_valid():
             meeting_form.save()
+            meeting.refresh_from_db()
+            create_notification(
+                user=meeting.student,
+                notification_type="meeting_updated",
+                title="Встреча изменена",
+                message=f"Психолог {request.user.get_display_name()} изменил(а) время встречи на {meeting.date.strftime('%d.%m.%Y')} в {meeting.time.strftime('%H:%M')}",
+                meeting=meeting,
+            )
             messages.success(request, "Встреча успешно обновлена.")
             return redirect("dashboard_psychologist")
         else:
@@ -792,9 +889,16 @@ def delete_meeting(request, meeting_id):
     if request.method == "POST":
         try:
             student_name = meeting.student.get_display_name()
+            student = meeting.student
             meeting_date = meeting.date.strftime("%d.%m.%Y")
             meeting_time = meeting.time.strftime("%H:%M")
             meeting.delete()
+            create_notification(
+                user=student,
+                notification_type="meeting_cancelled",
+                title="Встреча отменена",
+                message=f"Встреча на {meeting_date} в {meeting_time} была отменена",
+            )
             messages.success(
                 request,
                 f"Встреча со студентом {student_name} на {meeting_date} в {meeting_time} успешно удалена.",
@@ -819,3 +923,55 @@ def delete_meeting(request, meeting_id):
             "breadcrumbs": breadcrumbs,
         },
     )
+
+
+@login_required
+def notifications_list(request):
+    """Получение списка уведомлений для текущего пользователя"""
+    notifications = Notification.objects.filter(user=request.user).order_by("-created_at")[:10]
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    
+    from django.http import JsonResponse
+    return JsonResponse({
+        "notifications": [
+            {
+                "id": n.id,
+                "title": n.title,
+                "message": n.message,
+                "type": n.notification_type,
+                "is_read": n.is_read,
+                "created_at": n.created_at.strftime("%d.%m.%Y %H:%M"),
+                "application_id": n.related_application.id if n.related_application else None,
+            }
+            for n in notifications
+        ],
+        "unread_count": unread_count,
+    })
+
+
+@login_required
+def mark_notification_read(request, notification_id):
+    """Отметить уведомление как прочитанное"""
+    if request.method != "POST":
+        from django.http import JsonResponse
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+    
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.is_read = True
+    notification.save()
+    
+    from django.http import JsonResponse
+    return JsonResponse({"success": True})
+
+
+@login_required
+def mark_all_notifications_read(request):
+    """Отметить все уведомления как прочитанные"""
+    if request.method != "POST":
+        from django.http import JsonResponse
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+    
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    
+    from django.http import JsonResponse
+    return JsonResponse({"success": True})

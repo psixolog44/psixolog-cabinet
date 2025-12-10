@@ -97,3 +97,154 @@ function togglePasswordVisibility(inputId, button) {
     }
 }
 
+function toggleNotifications() {
+    const dropdown = document.getElementById('notificationsDropdown');
+    const button = document.getElementById('notificationsButton');
+    
+    if (!dropdown || !button) {
+        console.error('Notification elements not found');
+        return;
+    }
+    
+    dropdown.classList.toggle('show');
+    button.classList.toggle('active');
+    
+    if (dropdown.classList.contains('show')) {
+        loadNotifications();
+    }
+}
+
+function loadNotifications() {
+    const list = document.getElementById('notificationsList');
+    const badge = document.getElementById('notificationsBadge');
+    
+    if (!list || !badge) {
+        return;
+    }
+    
+    fetch('/notifications/')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data) {
+                throw new Error('Empty response');
+            }
+            
+            badge.textContent = data.unread_count || 0;
+            badge.style.display = (data.unread_count > 0) ? 'block' : 'none';
+            
+            if (!data.notifications || data.notifications.length === 0) {
+                list.innerHTML = '<div class="notification-empty">Нет уведомлений</div>';
+                return;
+            }
+            
+            list.innerHTML = data.notifications.map(notif => {
+                const appId = notif.application_id ? notif.application_id : 'null';
+                return `
+                <div class="notification-item ${notif.is_read ? 'read' : 'unread'}" onclick="markNotificationRead(${notif.id}, ${appId})">
+                    <div class="notification-title">${escapeHtml(notif.title)}</div>
+                    <div class="notification-message">${escapeHtml(notif.message)}</div>
+                    <div class="notification-time">${escapeHtml(notif.created_at)}</div>
+                </div>
+            `;
+            }).join('');
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки уведомлений:', error);
+            if (list) {
+                list.innerHTML = '<div class="notification-empty">Ошибка загрузки уведомлений</div>';
+            }
+        });
+}
+
+function markNotificationRead(notificationId, applicationId) {
+    fetch(`/notifications/${notificationId}/read/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadNotifications();
+            
+            if (applicationId && applicationId !== 'null') {
+                window.location.href = `/application/${applicationId}/`;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка отметки уведомления:', error);
+    });
+}
+
+function markAllNotificationsRead() {
+    fetch('/notifications/read-all/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadNotifications();
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка отметки всех уведомлений:', error);
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    if (!cookieValue) {
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        if (metaTag) {
+            cookieValue = metaTag.getAttribute('content');
+        }
+    }
+    return cookieValue;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+document.addEventListener('click', function(event) {
+    const container = document.querySelector('.notifications-container');
+    const dropdown = document.getElementById('notificationsDropdown');
+    const button = document.getElementById('notificationsButton');
+    
+    if (container && dropdown && button && !container.contains(event.target)) {
+        dropdown.classList.remove('show');
+        button.classList.remove('active');
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('notificationsButton')) {
+        loadNotifications();
+        setInterval(loadNotifications, 30000);
+    }
+});
+

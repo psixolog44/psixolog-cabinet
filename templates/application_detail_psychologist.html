@@ -66,7 +66,7 @@
             </div>
         {% elif application.psychologist == user and application.status != "completed" %}
             {% if not existing_report %}
-                <div class="report-section">
+                <div class="report-section" style="margin-top: 2rem;">
                     <h3>Завершить работу над заявкой</h3>
                     <p>Для завершения работы над заявкой необходимо заполнить отчет о проделанной работе.</p>
                     <form method="post" class="report-form">

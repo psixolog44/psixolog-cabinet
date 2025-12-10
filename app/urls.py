@@ -52,4 +52,7 @@ urlpatterns = [
     path("dashboard/admin/delete-user/<int:user_id>/", views.delete_user, name="delete_user"),
     path("meeting/edit/<int:meeting_id>/", views.edit_meeting, name="edit_meeting"),
     path("meeting/delete/<int:meeting_id>/", views.delete_meeting, name="delete_meeting"),
+    path("notifications/", views.notifications_list, name="notifications_list"),
+    path("notifications/<int:notification_id>/read/", views.mark_notification_read, name="mark_notification_read"),
+    path("notifications/read-all/", views.mark_all_notifications_read, name="mark_all_notifications_read"),
 ]

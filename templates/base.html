@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>{% block title %}Платформа психолога{% endblock %}</title>
     {% load static %}
     <link rel="icon" type="image/svg+xml" href="{% static 'img/brain-solid-full.svg' %}">
@@ -33,6 +34,21 @@
                 </div>
                 <div class="nav-links">
                     {% if user.is_authenticated %}
+                        <div class="notifications-container">
+                            <button class="notifications-button" id="notificationsButton" onclick="toggleNotifications()">
+                                <span class="notifications-icon">🔔</span>
+                                <span class="notifications-badge" id="notificationsBadge">0</span>
+                            </button>
+                            <div class="notifications-dropdown" id="notificationsDropdown">
+                                <div class="notifications-header">
+                                    <h3>Уведомления</h3>
+                                    <button class="mark-all-read-btn" onclick="markAllNotificationsRead()">Отметить все прочитанными</button>
+                                </div>
+                                <div class="notifications-list" id="notificationsList">
+                                    <div class="notifications-loading">Загрузка...</div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="user-menu">
                             <button class="user-menu-button" onclick="toggleUserMenu()">
                                 <span class="user-name">{{ user.username }}</span>
@@ -90,5 +106,14 @@
     </footer>
 
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        window.addEventListener('load', function() {
+            if (typeof toggleNotifications === 'undefined') {
+                console.error('Notifications JavaScript not loaded!');
+            } else {
+                console.log('Notifications JavaScript loaded successfully');
+            }
+        });
+    </script>
 </body>
 </html>

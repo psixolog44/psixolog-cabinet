@@ -242,3 +242,56 @@ class Report(models.Model):
             psychologist=self.psychologist,
             student=self.student
         ).order_by("date", "time")
+
+
+class Notification(models.Model):
+    """Модель уведомления для пользователей"""
+    
+    TYPE_CHOICES = [
+        ("meeting_scheduled", "Встреча назначена"),
+        ("meeting_updated", "Встреча изменена"),
+        ("meeting_cancelled", "Встреча отменена"),
+        ("consultation_message", "Новое сообщение"),
+        ("application_completed", "Заявка завершена"),
+        ("application_assigned", "Заявка назначена"),
+    ]
+    
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="notifications",
+        verbose_name="Пользователь",
+    )
+    notification_type = models.CharField(
+        max_length=50,
+        choices=TYPE_CHOICES,
+        verbose_name="Тип уведомления",
+    )
+    title = models.CharField(max_length=200, verbose_name="Заголовок")
+    message = models.TextField(verbose_name="Сообщение")
+    is_read = models.BooleanField(default=False, verbose_name="Прочитано")
+    related_application = models.ForeignKey(
+        Application,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="notifications",
+        verbose_name="Связанная заявка",
+    )
+    related_meeting = models.ForeignKey(
+        Meeting,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="notifications",
+        verbose_name="Связанная встреча",
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    
+    class Meta:
+        verbose_name = "Уведомление"
+        verbose_name_plural = "Уведомления"
+        ordering = ["-created_at"]
+    
+    def __str__(self):
+        return f"{self.title} - {self.user.username}"

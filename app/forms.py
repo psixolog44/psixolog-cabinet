@@ -242,11 +242,10 @@ class ConsultationForm(forms.ModelForm):
         labels = {
             "message": "Сообщение",
         }
-    
+
     def clean(self):
         """Валидация формы"""
         cleaned_data = super().clean()
-        # Валидация будет выполнена в view, где устанавливается psychologist или student
         return cleaned_data
 
 
